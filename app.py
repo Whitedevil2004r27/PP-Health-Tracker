@@ -224,8 +224,8 @@ def logout():
 
 @app.route('/login/google')
 def google_login():
-    # Dynamically generate the redirect URI based on the current domain
-    redirect_uri = url_for('google_auth', _external=True)
+    # Force the local redirect URI to avoid mismatch errors
+    redirect_uri = "http://127.0.0.1:3000/google/auth"
     return google.authorize_redirect(redirect_uri)
 
 @app.route('/google/auth')
