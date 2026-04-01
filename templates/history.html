@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-12 animate__animated animate__fadeIn">
+
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="space-y-4 text-center md:text-left">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white italic uppercase">Audit <span class="text-primary italic">Timeline</span></h1>
+            <p class="text-gray-500 font-bold uppercase text-[10px] tracking-widest leading-relaxed">Tracking neural health markers and systemic fatigue trends over a multi-assessment window.</p>
+        </div>
+        
+        <div class="flex flex-wrap items-center justify-center gap-3">
+            <div class="glass px-6 py-3 rounded-2xl flex items-center space-x-3 text-[10px] font-black uppercase text-gray-500 tracking-widest border-white/5">
+                <i data-lucide="info" class="w-4 h-4 text-primary"></i>
+                <span>Database Index: {{ predictions|length }} Records</span>
+            </div>
+            <a href="{{ url_for('export_csv') }}" class="glass-card hover:bg-white/5 px-6 py-3 rounded-2xl flex items-center space-x-2 text-[10px] font-black uppercase text-primary border border-primary/20 tracking-widest">
+                <i data-lucide="download-cloud" class="w-4 h-4"></i>
+                <span>Export Audit CSV</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="glass-card p-8 flex items-center space-x-6 border-white/5 group">
+            <div class="w-14 h-14 bg-primary/5 rounded-2xl flex items-center justify-center shadow-neon border border-primary/20 group-hover:scale-110 transition-transform">
+                <i data-lucide="layers" class="text-primary w-8 h-8"></i>
+            </div>
+            <div>
+                <p class="text-[9px] font-black uppercase text-gray-700 tracking-[0.4em]">Audit Count</p>
+                <p class="text-4xl font-black text-white italic tracking-tighter">{{ predictions|length }}</p>
+            </div>
+        </div>
+        
+        <div class="glass-card p-8 flex items-center space-x-6 border-white/5 group">
+            <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
+                <i data-lucide="calendar" class="text-gray-600 group-hover:text-primary w-8 h-8 transition-colors"></i>
+            </div>
+            <div>
+                <p class="text-[9px] font-black uppercase text-gray-700 tracking-[0.4em]">Latest Sync</p>
+                <p class="text-xl font-black text-white italic tracking-tight">{{ predictions[0].timestamp[:10] if predictions else 'None' }}</p>
+            </div>
+        </div>
+
+        <div class="glass-card p-8 flex items-center space-x-6 border-white/5 group">
+            <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
+                <i data-lucide="activity" class="text-gray-600 group-hover:text-primary w-8 h-8 transition-colors"></i>
+            </div>
+            <div>
+                <p class="text-[9px] font-black uppercase text-gray-700 tracking-[0.4em]">System Standard</p>
+                <p class="text-xl font-black text-white italic tracking-tight uppercase">Verified</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progression Card -->
+    <div class="glass-card p-10 space-y-10 border-white/5">
+        <div class="flex items-center justify-between">
+            <h3 class="font-black text-gray-600 tracking-[0.4em] text-[10px] uppercase italic">Neural Health Progression Index</h3>
+            <div class="flex items-center space-x-4 text-[9px] font-black uppercase text-gray-800 tracking-tighter">
+                <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-primary shadow-neon"></span> <span>Severity Audit Range</span></span>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="trendChart"></canvas>
+        </div>
+        <div class="flex justify-between text-[8px] font-black uppercase tracking-widest text-gray-800">
+            <span>Historical Baseline</span>
+            <span>Current Status</span>
+        </div>
+    </div>
+
+    <!-- Timeline List -->
+    <div class="space-y-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 py-4 px-2">
+            <h3 class="font-black text-gray-600 tracking-[0.4em] text-[10px] uppercase italic">Systemic Timeline Audit</h3>
+            
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterResults('all')" class="filter-btn h-10 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest bg-primary text-black shadow-neon transition-all">All</button>
+                <button onclick="filterResults('Normal')" class="filter-btn h-10 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest glass border-primary/20 text-gray-700 hover:text-primary transition-all">Stable</button>
+                <button onclick="filterResults('Chances')" class="filter-btn h-10 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest glass border-amber-500/20 text-gray-700 hover:text-amber-500 transition-all">Risk</button>
+                <button onclick="filterResults('Chronic')" class="filter-btn h-10 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest glass border-red-500/20 text-gray-700 hover:text-red-500 transition-all">Severe</button>
+            </div>
+        </div>
+
+        <div class="space-y-6" id="timelineFeed">
+            {% if predictions %}
+                {% for p in predictions %}
+                <div class="timeline-card glass bg-dark-card/50 p-2 md:p-10 rounded-[32px] border border-white/5 flex flex-col md:flex-row items-center gap-10 group hover:border-primary/20 transition-all animate__animated animate__fadeInUp" 
+                     data-diagnosis="{{ p.prediction }}">
+                    
+                    <!-- Left Indicator -->
+                    <div class="relative w-24 h-24 shrink-0 flex items-center justify-center">
+                        <div class="absolute inset-0 rounded-full blur-2xl opacity-10 group-hover:opacity-30 transition-opacity
+                             {% if 'Chronic' in p.prediction %} bg-red-500 {% elif 'Chances' in p.prediction %} bg-amber-500 {% else %} bg-primary {% endif %}"></div>
+                        <div class="w-full h-full rounded-2xl border-2 flex items-center justify-center p-3
+                             {% if 'Chronic' in p.prediction %} border-red-500/20 {% elif 'Chances' in p.prediction %} border-amber-500/20 {% else %} border-primary/20 {% endif %}">
+                             <div class="w-full h-full rounded-xl flex items-center justify-center shadow-2xl
+                                  {% if 'Chronic' in p.prediction %} bg-red-600 {% elif 'Chances' in p.prediction %} bg-amber-500 {% else %} bg-primary {% endif %}">
+                                  <i data-lucide="{% if 'Chronic' in p.prediction %}alert-circle{% elif 'Chances' in p.prediction %}activity{% else %}check{% endif %}" class="text-black w-10 h-10"></i>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="flex-1 text-center md:text-left">
+                        <p class="text-[9px] font-black uppercase text-gray-700 tracking-[0.4em] mb-1 italic">{{ p.timestamp }}</p>
+                        <h4 class="text-3xl font-black text-white italic tracking-tighter group-hover:text-primary transition-colors">{{ p.prediction }}</h4>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-4 mt-5">
+                            <span class="text-[9px] font-black text-gray-600 bg-white/5 py-1.5 px-4 rounded-full border border-white/5 flex items-center gap-2 uppercase tracking-widest italic"><i data-lucide="shield" class="w-3 h-3"></i> Audit CFD-00{{ loop.index }}</span>
+                            <span class="text-[9px] font-black text-gray-600 bg-white/5 py-1.5 px-4 rounded-full border border-white/5 flex items-center gap-2 uppercase tracking-widest italic"><i data-lucide="cpu" class="w-3 h-3"></i> Neural Synced</span>
+                        </div>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="w-full md:w-auto flex items-center justify-center">
+                        <button onclick="toggleDetails('details-{{ loop.index }}')" class="glass h-16 w-full md:w-auto px-10 rounded-2xl hover:bg-white/5 transition-all text-[10px] font-black uppercase tracking-widest text-gray-600 hover:text-white flex items-center justify-center space-x-3 shrink-0 italic">
+                            <span>Diagnostic Audit</span>
+                            <i data-lucide="chevron-down" id="arrow-{{ loop.index }}" class="w-4 h-4 transition-transform duration-300"></i>
+                        </button>
+                    </div>
+
+                    <!-- Accordion -->
+                    <div id="details-{{ loop.index }}" class="hidden w-full order-last mt-10 pt-10 border-t border-white/5">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-8">
+                            {% for key, val in p.inputs.items() %}
+                            <div class="space-y-1">
+                                <p class="text-[8px] font-black uppercase text-gray-800 tracking-tighter italic truncate">{{ key.replace('_', ' ') }}</p>
+                                <p class="text-lg font-black text-white italic tracking-tighter">{{ val }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="glass-card p-24 flex flex-col items-center justify-center space-y-8 border-white/5">
+                    <div class="w-24 h-24 bg-white/5 rounded-3xl flex items-center justify-center border border-white/5">
+                        <i data-lucide="database" class="text-gray-900 w-12 h-12 opacity-50"></i>
+                    </div>
+                    <div class="text-center space-y-2">
+                        <h4 class="text-lg font-black text-white uppercase italic tracking-widest leading-relaxed">No Audit Entries Indexed</h4>
+                        <p class="text-gray-800 font-bold uppercase text-[9px] tracking-[0.4em] max-w-xs mx-auto leading-relaxed">Initialize your first health sync to generate timeline markers.</p>
+                    </div>
+                    <a href="{{ url_for('predict') }}" class="h-16 px-12 bg-primary text-black font-black uppercase text-xs tracking-[0.2em] rounded-2xl hover:shadow-neon transition-all flex items-center space-x-3 italic">
+                        <span>New Health Sync</span>
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+    lucide.createIcons();
+
+    function toggleDetails(id) {
+        const el = document.getElementById(id);
+        const arrow = document.getElementById('arrow-' + id.split('-')[1]);
+        el.classList.toggle('hidden');
+        arrow.style.transform = el.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+
+    function filterResults(filter) {
+        const cards = document.querySelectorAll('.timeline-card');
+        const btns = document.querySelectorAll('.filter-btn');
+        
+        btns.forEach(btn => {
+            btn.classList.remove('bg-primary', 'text-black', 'shadow-neon');
+            btn.classList.add('glass', 'text-gray-700');
+        });
+        
+        event.target.classList.replace('glass', 'bg-primary');
+        event.target.classList.replace('text-gray-700', 'text-black');
+        event.target.classList.add('shadow-neon');
+
+        cards.forEach(card => {
+            const diag = card.getAttribute('data-diagnosis');
+            if (filter === 'all' || diag.includes(filter)) {
+                card.style.display = 'flex';
+                card.classList.add('animate__fadeInUp');
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    {% if predictions %}
+        const historyData = [
+            {% for p in predictions[::-1] %} 
+                {{ 0 if 'Normal' in p.prediction else 1 if 'Chances' in p.prediction else 2 }},
+            {% endfor %}
+        ];
+        const historyLabels = [{% for p in predictions[::-1] %} "{{ p.timestamp[:10] }}", {% endfor %}];
+    {% else %}
+        const historyData = [];
+        const historyLabels = [];
+    {% endif %}
+
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: historyLabels,
+            datasets: [{
+                data: historyData,
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                borderWidth: 5,
+                pointBackgroundColor: '#22c55e',
+                pointBorderColor: '#000',
+                pointRadius: 6,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: { 
+                    min: 0, 
+                    max: 2, 
+                    ticks: { 
+                        color: '#4b5563', 
+                        font: { weight: 'black', size: 10 },
+                        callback: function(v) { return ['Stable', 'Risk', 'Severe'][v]; }
+                    } 
+                }
+            }
+        }
+    });
+
+</script>
+{% endblock %}

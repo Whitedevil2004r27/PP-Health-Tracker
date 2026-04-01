@@ -1,0 +1,15 @@
+body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f0f2f5; }
+.container { max-width: 800px; margin: 20px auto; padding: 20px; background:#fff; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+nav { background:#4caf50; padding:10px; color:#fff; display:flex; justify-content:space-between; align-items:center; }
+nav a { color:#fff; margin-right:15px; text-decoration:none; font-weight:bold; }
+h2 { color:#333; }
+form label { display:block; margin-top:10px; font-weight:bold; }
+form input, form select { width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc; }
+button { margin-top:15px; padding:10px 20px; border:none; background:#4caf50; color:#fff; font-size:16px; border-radius:5px; cursor:pointer; }
+button:hover { background:#45a049; }
+.flash { padding:10px; border-radius:5px; margin-bottom:10px; }
+.flash.success { background:#4caf50; color:#fff; }
+.flash.danger { background:#f44336; color:#fff; }
+.flash.warning { background:#ff9800; color:#fff; }
+.flash.info { background:#2196f3; color:#fff; }
+.error { color:#f44336; font-weight:bold; }

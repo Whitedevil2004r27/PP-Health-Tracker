@@ -1,0 +1,15 @@
+flask
+pandas
+numpy
+matplotlib
+seaborn
+joblib
+scikit-learn
+tensorflow
+imbalanced-learn
+authlib
+python-dotenv
+fpdf
+tf-keras
+requests
+cryptography
