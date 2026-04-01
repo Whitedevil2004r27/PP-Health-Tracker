@@ -2,6 +2,7 @@ services:
   - type: web
     name: pp-health-tracker
     runtime: python
+    plan: free # Explicitly using the Free Tier
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
