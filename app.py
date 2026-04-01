@@ -170,7 +170,7 @@ columns = numerical_cols + categorical_cols
 def home():
     if 'username' in session:
         return redirect(url_for('predict'))
-    return redirect(url_for('login'))
+    return render_template('index.html')
 
 @app.route('/register', methods=['GET','POST'])
 def register():

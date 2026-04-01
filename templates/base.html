@@ -156,6 +156,7 @@
 <body class="page-fade overflow-y-auto">
 
     <!-- Desktop Sidebar -->
+    {% if session.get('user_id') %}
     <aside id="sidebar" class="fixed left-0 top-0 h-screen w-20 hover:w-64 bg-dark border-r border-white/5 z-50 sidebar hidden md:flex flex-col items-center py-8 group transition-all duration-300">
         <div class="mb-12 flex items-center justify-center space-x-3 w-full px-6">
             <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center shrink-0 shadow-neon">
@@ -190,19 +191,23 @@
             </a>
         </div>
     </aside>
+    {% endif %}
 
     <!-- Mobile Navigation -->
+    {% if session.get('user_id') %}
     <nav class="fixed bottom-0 left-0 w-full glass bg-dark/80 md:hidden flex justify-around items-center py-4 px-6 z-50 border-t border-white/5">
         <a href="{{ url_for('dashboard') }}" class="{% if request.path == url_for('dashboard') %}text-primary{% endif %}"><i data-lucide="layout-grid" class="w-6 h-6"></i></a>
         <a href="{{ url_for('predict') }}" class="{% if request.path == url_for('predict') %}text-primary{% endif %}"><i data-lucide="stethoscope" class="w-6 h-6"></i></a>
         <a href="{{ url_for('history') }}" class="{% if request.path == url_for('history') %}text-primary{% endif %}"><i data-lucide="history" class="w-6 h-6"></i></a>
         <a href="{{ url_for('logout') }}" class="text-red-500"><i data-lucide="log-out" class="w-6 h-6"></i></a>
     </nav>
+    {% endif %}
 
     <!-- Main Content wrapper -->
-    <div class="md:ml-20 min-h-screen flex flex-col transition-all duration-300">
+    <div class="{% if session.get('user_id') %}md:ml-20 flex flex-col transition-all duration-300{% endif %} min-h-screen">
         
         <!-- Top Navbar -->
+        {% if session.get('user_id') %}
         <header class="h-16 border-b border-white/5 bg-dark/50 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-8">
             <div class="flex items-center space-x-4">
                 <h2 class="text-gray-500 hidden sm:block font-medium text-xs tracking-widest uppercase" id="liveClock"></h2>
@@ -216,7 +221,7 @@
                 
                 <div class="flex items-center space-x-3 group cursor-pointer">
                     <div class="text-right">
-                        <p class="text-sm font-bold text-white transition-colors group-hover:text-primary">Hello, {{ session.get('username', 'User') }}</p>
+                        <p class="text-sm font-bold text-white transition-colors group-hover:text-primary">Hello, {{ (session.get('username') or 'User') }}</p>
                         <p class="text-[9px] text-gray-500 uppercase tracking-widest font-black leading-tight">Patient Portal</p>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-dark-card border border-white/10 flex items-center justify-center text-xs font-bold text-primary shadow-neon group-hover:scale-105 transition-transform overflow-hidden">
@@ -229,9 +234,10 @@
                 </div>
             </div>
         </header>
+        {% endif %}
 
         <!-- Dynamic Content Body -->
-        <main class="flex-1 p-6 md:p-10 mb-20 md:mb-0">
+        <main class="flex-1 {% if session.get('user_id') %}p-6 md:p-10 mb-20 md:mb-0{% endif %}">
             {% block content %}{% endblock %}
         </main>
 

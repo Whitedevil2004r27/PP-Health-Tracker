@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="relative min-h-screen overflow-hidden">
+    <!-- Animated Background Elements -->
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none -z-10">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-6 pt-32 pb-20 text-center relative">
+        <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass border-primary/20 mb-8 animate__animated animate__fadeInDown">
+            <span class="w-2 h-2 bg-primary rounded-full shadow-neon"></span>
+            <span class="text-xs font-bold tracking-widest uppercase text-primary">Neural Health Diagnostics v2.0</span>
+        </div>
+        
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-tight animate__animated animate__fadeInUp">
+            The Future of <br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_auto] animate-gradient">Health Intelligence</span>
+        </h1>
+        
+        <p class="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 mb-12 leading-relaxed animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+            PP Health Tracker uses advanced LSTM Neural Networks to analyze systemic health metrics and provide probabilistic diagnostics with clinical-grade accuracy.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+            <a href="{{ url_for('register') }}" class="px-8 py-4 bg-primary text-black font-bold rounded-2xl shadow-neon hover:scale-105 hover:shadow-accent transition-all flex items-center group">
+                Get Started Free
+                <i data-lucide="arrow-right" class="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            <a href="{{ url_for('login') }}" class="px-8 py-4 glass border-white/10 font-bold rounded-2xl hover:bg-white/5 transition-all">
+                Existing Patient Login
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="max-w-7xl mx-auto px-6 py-24">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- AI Feature -->
+            <div class="glass-card p-8 rounded-3xl animate__animated animate__fadeInUp" style="animation-delay: 0.5s">
+                <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6">
+                    <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Neural AI</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Deep learning LSTM models specifically trained to detect Chronic Fatigue Syndrome and systemic anomalies.</p>
+            </div>
+
+            <!-- Auth Feature -->
+            <div class="glass-card p-8 rounded-3xl animate__animated animate__fadeInUp" style="animation-delay: 0.6s">
+                <div class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 mb-6">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Secure Sync</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">One-click Google OAuth 2.0 integration ensures your medical history is securely encrypted and easily accessible.</p>
+            </div>
+
+            <!-- PDF Feature -->
+            <div class="glass-card p-8 rounded-3xl animate__animated animate__fadeInUp" style="animation-delay: 0.7s">
+                <div class="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 mb-6">
+                    <i data-lucide="file-text" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Clinical Audits</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Generate professional, clinically-formatted PDF reports for your medical consultations in a single click.</p>
+            </div>
+
+            <!-- History Feature -->
+            <div class="glass-card p-8 rounded-3xl animate__animated animate__fadeInUp" style="animation-delay: 0.8s">
+                <div class="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-500 mb-6">
+                    <i data-lucide="line-chart" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Health Trends</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Track your health progression over time with interactive dashboards and historical data visualization.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTAs & Trust -->
+    <section class="max-w-7xl mx-auto px-6 py-24">
+        <div class="glass p-12 md:p-20 rounded-[40px] text-center relative overflow-hidden border-primary/20">
+            <div class="absolute top-0 right-0 p-12 pointer-events-none opacity-20">
+                <i data-lucide="activity" class="w-64 h-64 text-primary"></i>
+            </div>
+            
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Ready to take control <br/>of your health data?</h2>
+            <p class="text-gray-400 mb-12 max-w-xl mx-auto">Join thousands of patients using AI to monitor systemic health and achieve predictive wellness.</p>
+            
+            <a href="{{ url_for('register') }}" class="px-12 py-5 bg-white text-black font-black rounded-2xl hover:scale-105 transition-transform inline-block">
+                Create Your Account
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer Light -->
+    <footer class="max-w-7xl mx-auto px-6 py-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+        <div class="flex items-center space-x-2 mb-4 md:mb-0">
+            <div class="w-6 h-6 bg-primary rounded shadow-neon flex items-center justify-center">
+                <i data-lucide="activity" class="w-4 h-4 text-black"></i>
+            </div>
+            <span class="font-bold text-white">PP Health Tracker</span>
+        </div>
+        <p>© 2026 PP Health Group. Built for Advanced Medical Diagnostics.</p>
+    </section>
+</div>
+
+<style>
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animate-gradient {
+        background-size: 200% 200%;
+        animation: gradient 6s ease infinite;
+    }
+</style>
+{% endblock %}
