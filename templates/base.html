@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PP Health Tracker</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -159,8 +163,8 @@
     {% if session.get('user_id') %}
     <aside id="sidebar" class="fixed left-0 top-0 h-screen w-20 hover:w-64 bg-dark border-r border-white/5 z-50 sidebar hidden md:flex flex-col items-center py-8 group transition-all duration-300">
         <div class="mb-12 flex items-center justify-center space-x-3 w-full px-6">
-            <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center shrink-0 shadow-neon">
-                <i data-lucide="activity" class="text-black w-6 h-6"></i>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-neon overflow-hidden">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="w-full h-full object-cover">
             </div>
             <span class="text-lg font-bold tracking-tight text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">HealthTracker</span>
         </div>
