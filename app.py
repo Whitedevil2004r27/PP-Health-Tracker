@@ -583,4 +583,6 @@ def download_report():
     return response
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port=3000, debug=True)
+    # Use environment variables for port and host (required for production)
+    port = int(os.environ.get("PORT", 3000))
+    app.run(host="0.0.0.0", port=port, debug=False)
