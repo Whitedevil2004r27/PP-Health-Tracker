@@ -35,6 +35,7 @@ import io
 import json
 import csv
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.middleware.proxy_fix import ProxyFix
 # Authentication related (Safe import wrapper)
 try:
     from authlib.integrations.flask_client import OAuth
@@ -61,6 +62,15 @@ except ImportError:
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey')
+
+# Render/Proxy Support (Fixes MismatchingStateError on production)
+if os.environ.get('RENDER') or os.environ.get('PROXY_FIX'):
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['PREFERRED_URL_SCHEME'] = 'https'
+
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_NAME'] = 'pp_health_session'
 
 # OAuth Configuration
 oauth = OAuth(app)
@@ -282,8 +292,9 @@ def logout():
 
 @app.route('/login/google')
 def google_login():
-    # Force the local redirect URI to avoid mismatch errors
-    redirect_uri = "http://127.0.0.1:3000/google/auth"
+    # Dynamic redirect detection (Local vs. Render)
+    # Using _external=True ensures the full protocol/host is matched
+    redirect_uri = url_for('google_auth', _external=True)
     return google.authorize_redirect(redirect_uri)
 
 @app.route('/google/auth')
