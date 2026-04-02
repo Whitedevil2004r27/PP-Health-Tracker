@@ -1,69 +1,80 @@
-# PP Health Tracker 🚀
+# AI-Powered Predictive Health Tracker | Clinical Intelligence 🚀🧠
 
-An advanced, AI-powered predictive health monitoring system designed to track systemic health metrics and provide diagnostic insights through Neural Network models.
+An advanced, high-fidelity healthcare diagnostics platform utilizing **LSTM (Long Short-Term Memory)** neural networks for systemic wellness modeling and forensic risk assessment.
 
 ![Health Tracker Banner](https://images.unsplash.com/photo-1576091160550-2173dad99901?auto=format&fit=crop&q=80&w=1200)
 
-## ✨ Features
+## 💎 Liquid Glass Architecture
+The platform features a signature **"Liquid Glass"** heritage aesthetic, characterized by high-index backdrop blurs, neon emerald accents, and a unified responsive navigation system.
 
-- **🛡️ Secure Authentication**: Integrated Google OAuth 2.0 and local password-based authentication.
-- **🧠 AI Diagnostics**: Neural Network-powered health prediction models with "Safe Mode" fallback.
-- **📊 Interactive Dashboard**: Real-time health metrics visualization and historical data tracking.
-- **📄 PDF Audit Reports**: Generate professional systemic health audit reports with detailed data summaries.
-- **☁️ Platform Independent**: Cross-platform support with automated database self-healing.
-- **🎨 Premium UI**: Modern, dark-themed responsive design with glassmorphism and Lucide icons.
+- **Desktop**: Floating Top-Navigation Bar for synchronized workspace auditing.
+- **Mobile**: Thumb-friendly Bottom-Navigation with a centralized "Analyze" action.
 
-## 🛠️ Tech Stack
+## ✨ V3.0 Clinical Features
 
-- **Backend**: Flask (Python)
-- **Database**: SQLite3
-- **Authentication**: Authlib (Google OAuth)
-- **Report Generation**: FPDF
-- **Frontend**: TailwindCSS, Lucide Icons, Vanilla JS
+- **🧠 Multi-Stage LSTM Engine**: Advanced predictive modeling for systemic health markers (Resting HR, HRV, BP Intensity).
+- **🛡️ Stabilization & Security**: 
+  - **Google OAuth 2.0**: Hardened authentication with session-state verification.
+  - **Proxy Protocol**: Native **ProxyFix** integration for seamless deployment on Render.com (HTTPS).
+- **📂 Forensic Documentation**: 
+  - **Neural Specifications**: Detailed logic for the LSTM diagnostic sequences.
+  - **Clinical Center**: Integrated Help Center, Privacy Policy, and Terms of Service.
+- **⚙️ Integrated Identity Module**: Comprehensive profile management, UI density preferences, and persistent notification settings.
+- **📊 Neural Forecasts**: Real-time visualization of systemic wellness progression over time.
 
-## 🚀 Getting Started
+## 🛠️ Technology Stack
+
+- **Intelligence**: TensorFlow / Keras (LSTM models), Scikit-Learn (Clinical Encoders).
+- **Backend**: Flask (Python 3.12+).
+- **Database**: Self-healing SQLite3 with automated schema migration.
+- **Security**: Authlib (OAuth), Werkzeug (ProxyFix).
+- **Frontend**: TailwindCSS (Custom Logic), Lucide Icons, Glassmorphism CSS.
+
+## 🚀 Deployment & Installation
 
 ### Prerequisites
+- Python 3.8+ (Verified on Python 3.12/3.13)
+- Google Cloud Console Credentials (for OAuth authorization)
 
-- Python 3.8+ (Compatible with Python 3.12, 3.13, and 3.14)
-- Google Cloud Console Credentials (for OAuth)
-
-### Installation
-
+### Local Configuration
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/PP-Health-Tracker.git
+   git clone https://github.com/Whitedevil2004r27/PP-Health-Tracker.git
    cd PP-Health-Tracker
    ```
 
-2. **Set up environment variables**:
-   Create a `.env` file in the root directory:
+2. **Environment Setup**:
+   Create a `.env` file in the root:
    ```env
-   SECRET_KEY=your_secret_key
-   GOOGLE_CLIENT_ID=your_google_id
-   GOOGLE_CLIENT_SECRET=your_google_secret
+   SECRET_KEY=your_clinical_key
+   GOOGLE_CLIENT_ID=your_id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your_client_secret
    ```
 
-3. **Install dependencies**:
+3. **Install Core Intelligence**:
    ```bash
-   pip install flask authlib python-dotenv requests fpdf
+   pip install -r requirements.txt
    ```
 
-4. **Run the application**:
+4. **Initialize System**:
    ```bash
    python app.py
    ```
-   The app will be available at `http://127.0.0.1:3000`.
+   *The diagnostics portal will be accessible at `http://127.0.0.1:3000`.*
 
-## 📜 Database Schema
+### Production Deployment (Render.com)
+The application is pre-configured with `render.yaml` and `ProxyFix` for instant deployment. 
+- Ensure `RENDER=True` is in your environment variables.
+- The `lstm_multiclass_model.h5` neural weights are tracked for production parity.
 
-The system uses a self-healing SQLite database (`users.db`) that automatically migrates missing columns:
-- `users`: ID, Username, Email, Google_ID, Profile_Pic
-- `predictions`: ID, User_ID, Timestamp, Prediction, Input_Data
+## 📜 Neural Diagnostic Protocol
+The system uses a multi-stage data synthesis protocol:
+1. **Autonomic Markers**: Synthesis of resting vitals.
+2. **Systemic Fatigue**: Modeling sleep flux and cognitive depth.
+3. **Forensic Audit**: Generating clinical PDF reports for patient history.
 
 ## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. Developed for Semester 8 - Final Project.
 
 ---
-*Developed for Semester 8 - Final Project*
+*Global Clinical Standard | AI Health Intel Group*
