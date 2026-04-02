@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-16 animate__animated animate__fadeIn">
+    <!-- Privacy Policy Hero -->
+    <section class="text-center space-y-6 pt-10">
+        <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black uppercase tracking-[0.2em]">
+            Neural Patient Encryption
+        </div>
+        <h1 class="text-5xl md:text-7xl font-black text-white leading-tight uppercase italic italic">
+            Privacy <span class="text-blue-500 italic tracking-tighter">Policy</span>
+        </h1>
+        <p class="text-gray-500 max-w-2xl mx-auto font-bold leading-relaxed uppercase text-[10px] tracking-widest">
+            Detailed clinical protocols on how AI-Powered Predictive Health Tracker manages, encrypts, and secures your systemic health markers.
+        </p>
+    </section>
+
+    <!-- Policy Content -->
+    <section class="glass-card p-12 md:p-20 border-white/5 space-y-12">
+        <div class="space-y-4">
+            <h2 class="text-2xl font-black text-white italic uppercase tracking-tighter">1. Digital Patient Identity</h2>
+            <p class="text-gray-500 text-sm leading-relaxed uppercase font-medium tracking-tight">
+                To access the **AI-Powered Predictive Health Tracker**, we utilize secure Google OAuth 2.0. We only collect your primary identity markers to associate diagnostic assessments with your unique Clinical ID.
+            </p>
+        </div>
+
+        <div class="space-y-4">
+            <h2 class="text-2xl font-black text-white italic uppercase tracking-tighter">2. Neural Data Encryption</h2>
+            <p class="text-gray-500 text-sm leading-relaxed uppercase font-medium tracking-tight">
+                All health markers (Resting HR, Sleep Depth, PEM indices) are stored in an encrypted SQLite registry. Data transmission between your client and our LSTM neural core is protected via industry-standard TLS 1.3 protocols.
+            </p>
+        </div>
+
+        <div class="space-y-4">
+            <h2 class="text-2xl font-black text-white italic uppercase tracking-tighter">3. Clinical HIPAA Alignment</h2>
+            <p class="text-gray-500 text-sm leading-relaxed uppercase font-medium tracking-tight">
+                While this platform is a predictive wellness tool, we adhere to the core principles of the Health Insurance Portability and Accountability Act (HIPAA). We ensure your systemic diagnostics are never shared with third-party aggregators without explicit patient consent.
+            </p>
+        </div>
+
+        <div class="space-y-4">
+            <h2 class="text-2xl font-black text-white italic uppercase tracking-tighter">4. Forensic Audit Logs</h2>
+            <p class="text-gray-500 text-sm leading-relaxed uppercase font-medium tracking-tight">
+                We maintain record of every diagnostic audit performed. This ensures that you have a consistent medical history that can be verified by healthcare professionals at your discretion.
+            </p>
+        </div>
+
+        <div class="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-500 font-black tracking-widest uppercase">
+            <p>Last Clinical Review: April 2, 2026</p>
+            <p>Standard Protocol v3.0</p>
+        </div>
+    </section>
+</div>
+{% endblock %}

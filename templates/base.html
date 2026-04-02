@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PP Health Tracker</title>
+    <meta name="description" content="AI-Powered Predictive Health Tracker: Advanced clinical intelligence and diagnostic portal using LSTM neural networks for systemic risk assessment and wellness forecasting.">
+    <meta name="keywords" content="predictive health, AI diagnostics, neural wellness, medical intelligence, patient portfolio">
+    <meta property="og:title" content="AI-Powered Predictive Health Tracker | Clinical Intelligence">
+    <meta property="og:description" content="Futuristic health analysis powered by neural markers and predictive modeling.">
+    <meta property="og:image" content="{{ url_for('static', filename='logo.png', _external=True) }}">
+    <title>AI-Powered Predictive Health Tracker | Clinical Intelligence</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
@@ -44,32 +49,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #f1f5f9;
-            overflow-x: hidden;
+        :root {
+            --bg-color: #000000;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --text-color: #f1f5f9;
+            --border-primary: rgba(34, 197, 94, 0.1);
+            --nav-bg: rgba(0, 0, 0, 0.5);
+            --sidebar-hover: rgba(255, 255, 255, 0.05);
         }
 
-        /* Glassmorphism */
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background-color 0s, color 0s;
+        }
+
+        /* Glassmorphism Evolution: Liquid Glass */
         .glass {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(34, 197, 94, 0.1);
-            border-radius: 16px;
+            background: rgba(10, 10, 10, 0.4);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid rgba(74, 222, 128, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.4);
         }
 
         .glass-card {
-            background: rgba(10, 10, 10, 0.6);
-            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            border-radius: 32px;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .glass-card:hover {
-            border-color: rgba(34, 197, 94, 0.4);
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(74, 222, 128, 0.3);
+            box-shadow: 0 20px 40px rgba(34, 197, 94, 0.15), 0 0 20px rgba(34, 197, 94, 0.05);
+            transform: translateY(-8px) scale(1.01);
         }
 
         /* Custom Scrollbar */
@@ -159,120 +181,112 @@
 </head>
 <body class="page-fade overflow-y-auto">
 
-    <!-- Desktop Sidebar -->
+    <!-- Desktop Navigation (Top Bar) & Mobile Navigation Header Logic -->
+    <!-- [Sidebar Eliminated for Unified Portal Experience] -->
+
+    <!-- Mobile Bottom Navigation (Refined) -->
     {% if session.get('user_id') %}
-    <aside id="sidebar" class="fixed left-0 top-0 h-screen w-20 hover:w-64 bg-dark border-r border-white/5 z-50 sidebar hidden md:flex flex-col items-center py-8 group transition-all duration-300">
-        <div class="mb-12 flex items-center justify-center space-x-3 w-full px-6">
-            <div class="w-10 h-10 flex items-center justify-center shrink-0">
-                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="w-full h-full object-contain">
+    <nav class="fixed bottom-0 left-0 w-full glass bg-dark/90 md:hidden flex justify-around items-center py-5 px-6 z-50 border-t border-white/5 shadow-[0_-8px_32px_rgba(0,0,0,0.5)]">
+        <a href="{{ url_for('dashboard') }}" class="flex flex-col items-center space-y-1 {% if request.path == url_for('dashboard') %}text-primary{% else %}text-gray-500{% endif %}">
+            <i data-lucide="layout-grid" class="w-6 h-6"></i>
+            <span class="text-[8px] font-black uppercase tracking-widest">Feed</span>
+        </a>
+        <a href="{{ url_for('predict') }}" class="flex flex-col items-center space-y-1 {% if request.path == url_for('predict') %}text-primary{% else %}text-gray-500{% endif %}">
+            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center -mt-8 border border-primary/20 shadow-neon">
+                <i data-lucide="plus" class="w-6 h-6 text-primary"></i>
             </div>
-            <span class="text-lg font-bold tracking-tight text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">HealthTracker</span>
-        </div>
-
-        <nav class="flex-1 w-full space-y-4 px-3">
-            <a href="{{ url_for('dashboard') }}" class="flex items-center space-x-4 p-4 rounded-xl hover:bg-white/5 transition-all group/nav {% if request.path == url_for('dashboard') %}nav-active{% endif %}">
-                <i data-lucide="layout-grid" class="w-6 h-6 shrink-0"></i>
-                <span class="opacity-0 group-hover:opacity-100 transition-opacity font-medium whitespace-nowrap">Dashboard</span>
-            </a>
-            <a href="{{ url_for('predict') }}" class="flex items-center space-x-4 p-4 rounded-xl hover:bg-white/5 transition-all group/nav {% if request.path == url_for('predict') %}nav-active{% endif %}">
-                <i data-lucide="stethoscope" class="w-6 h-6 shrink-0"></i>
-                <span class="opacity-0 group-hover:opacity-100 transition-opacity font-medium whitespace-nowrap">New Analysis</span>
-            </a>
-            <a href="{{ url_for('history') }}" class="flex items-center space-x-4 p-4 rounded-xl hover:bg-white/5 transition-all group/nav {% if request.path == url_for('history') %}nav-active{% endif %}">
-                <i data-lucide="history" class="w-6 h-6 shrink-0"></i>
-                <span class="opacity-0 group-hover:opacity-100 transition-opacity font-medium whitespace-nowrap">History</span>
-            </a>
-            <a href="#" class="flex items-center space-x-4 p-4 rounded-xl hover:bg-white/5 transition-all group/nav">
-                <i data-lucide="user" class="w-6 h-6 shrink-0"></i>
-                <span class="opacity-0 group-hover:opacity-100 transition-opacity font-medium whitespace-nowrap">Settings</span>
-            </a>
-        </nav>
-
-        <div class="w-full px-3">
-            <a href="{{ url_for('logout') }}" class="flex items-center space-x-4 p-4 rounded-xl hover:bg-red-500/10 text-red-500 transition-all group/nav">
-                <i data-lucide="log-out" class="w-6 h-6 shrink-0"></i>
-                <span class="opacity-0 group-hover:opacity-100 transition-opacity font-medium">Logout</span>
-            </a>
-        </div>
-    </aside>
-    {% endif %}
-
-    <!-- Mobile Navigation -->
-    {% if session.get('user_id') %}
-    <nav class="fixed bottom-0 left-0 w-full glass bg-dark/80 md:hidden flex justify-around items-center py-4 px-6 z-50 border-t border-white/5">
-        <a href="{{ url_for('dashboard') }}" class="{% if request.path == url_for('dashboard') %}text-primary{% endif %}"><i data-lucide="layout-grid" class="w-6 h-6"></i></a>
-        <a href="{{ url_for('predict') }}" class="{% if request.path == url_for('predict') %}text-primary{% endif %}"><i data-lucide="stethoscope" class="w-6 h-6"></i></a>
-        <a href="{{ url_for('history') }}" class="{% if request.path == url_for('history') %}text-primary{% endif %}"><i data-lucide="history" class="w-6 h-6"></i></a>
-        <a href="{{ url_for('logout') }}" class="text-red-500"><i data-lucide="log-out" class="w-6 h-6"></i></a>
+            <span class="text-[8px] font-black uppercase tracking-widest text-primary">Analyze</span>
+        </a>
+        <a href="{{ url_for('history') }}" class="flex flex-col items-center space-y-1 {% if request.path == url_for('history') %}text-primary{% else %}text-gray-500{% endif %}">
+            <i data-lucide="history" class="w-6 h-6"></i>
+            <span class="text-[8px] font-black uppercase tracking-widest">Audits</span>
+        </a>
     </nav>
     {% endif %}
 
     <!-- Main Content wrapper -->
-    <div class="{% if session.get('user_id') %}md:ml-20 flex flex-col transition-all duration-300{% endif %} min-h-screen">
+    <div class="flex flex-col transition-all duration-500 min-h-screen">
         
-        <!-- Top Navbar -->
-        {% if session.get('user_id') %}
-        <header class="h-16 border-b border-white/5 bg-dark/50 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-8">
-            <div class="flex items-center space-x-6">
-                <!-- Project Logo in Header -->
-                <div class="flex items-center space-x-3">
-                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="w-8 h-8 object-contain">
-                    <h1 class="text-lg font-black tracking-tight text-white hidden lg:block">PP Health</h1>
-                </div>
-                <div class="h-6 w-px bg-white/10 hidden lg:block"></div>
-                <h2 class="text-gray-500 hidden sm:block font-medium text-[10px] tracking-widest uppercase" id="liveClock"></h2>
+        <!-- Top Navbar (Global) -->
+        <header class="h-20 border-b border-white/5 bg-dark/60 backdrop-blur-xl sticky top-0 z-[100] flex items-center justify-between px-10 transition-all duration-500 shadow-2xl">
+            <div class="flex items-center space-x-12">
+                <!-- Global Brand Logo -->
+                <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('home') }}" class="flex items-center group outline-none">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="w-14 h-14 object-contain group-hover:scale-110 transition-transform duration-500 py-1">
+                </a>
+                
+                {% if session.get('user_id') %}
+                <!-- Unified Desktop Top Navigation Menu -->
+                <nav class="hidden md:flex items-center space-x-1">
+                    <a href="{{ url_for('dashboard') }}" class="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all {% if request.path == url_for('dashboard') %}text-primary bg-primary/5{% else %}text-gray-500 hover:text-white hover:bg-white/5{% endif %}">Dashboard</a>
+                    <a href="{{ url_for('predict') }}" class="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all {% if request.path == url_for('predict') %}text-primary bg-primary/5{% else %}text-gray-500 hover:text-white hover:bg-white/5{% endif %}">New Analysis</a>
+                    <a href="{{ url_for('history') }}" class="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all {% if request.path == url_for('history') %}text-primary bg-primary/5{% else %}text-gray-500 hover:text-white hover:bg-white/5{% endif %}">Audit History</a>
+                </nav>
+                {% endif %}
             </div>
             
             <div class="flex items-center space-x-6">
-                <div class="relative group cursor-pointer hidden sm:block">
-                    <i data-lucide="bell" class="w-5 h-5 text-gray-400 hover:text-primary transition-colors"></i>
-                    <span class="absolute -top-1 -right-1 w-1.5 h-1.5 bg-primary rounded-full shadow-neon"></span>
-                </div>
-                
-                <!-- User Profile Dropdown -->
-                <div class="relative">
-                    <button onclick="toggleDropdown()" class="flex items-center space-x-3 group cursor-pointer p-1.5 rounded-2xl hover:bg-white/5 transition-all outline-none">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-bold text-white group-hover:text-primary transition-colors">{{ (session.get('username') or 'User') }}</p>
-                            <p class="text-[9px] text-gray-500 uppercase tracking-widest font-black leading-tight">Patient Portal</p>
-                        </div>
-                        <div class="w-9 h-9 rounded-xl bg-dark-card border border-white/10 flex items-center justify-center text-xs font-bold text-primary shadow-neon group-hover:scale-105 transition-transform overflow-hidden">
-                            {% if session.get('profile_pic') %}
-                                <img src="{{ session.get('profile_pic') }}" alt="Profile" class="w-full h-full object-cover">
-                            {% else %}
-                                {{ (session.get('username') or 'User')[0].upper() }}
-                            {% endif %}
-                        </div>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 group-hover:text-white transition-colors"></i>
-                    </button>
 
-                    <!-- Dropdown Menu -->
-                    <div id="userDropdown" class="absolute right-0 mt-3 w-56 glass bg-dark/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden hidden animate__animated animate__fadeInUp animate__faster z-50">
-                        <div class="p-4 border-b border-white/5 bg-white/5">
-                            <p class="text-xs text-gray-500 uppercase font-black tracking-widest mb-1">Account</p>
-                            <p class="text-sm font-bold text-white truncate">{{ session.get('username') }}</p>
-                        </div>
-                        <div class="p-2">
-                            <a href="#" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition-all group/item">
-                                <i data-lucide="user" class="w-4 h-4 text-gray-500 group-hover/item:text-primary"></i>
-                                <span class="text-sm font-medium">Profile Settings</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition-all group/item">
-                                <i data-lucide="settings" class="w-4 h-4 text-gray-500 group-hover/item:text-primary"></i>
-                                <span class="text-sm font-medium">Preferences</span>
-                            </a>
-                        </div>
-                        <div class="p-2 border-t border-white/5">
-                            <a href="{{ url_for('logout') }}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-all group/item">
-                                <i data-lucide="log-out" class="w-4 h-4"></i>
-                                <span class="text-sm font-bold">Logout</span>
-                            </a>
+                {% if session.get('user_id') %}
+                    <div class="relative group cursor-pointer hidden sm:block">
+                        <i data-lucide="bell" class="w-5 h-5 text-gray-400 hover:text-primary transition-colors"></i>
+                        <span class="absolute -top-1 -right-1 w-1.5 h-1.5 bg-primary rounded-full shadow-neon"></span>
+                    </div>
+                    
+                    <!-- Authenticated User Profile -->
+                    <div class="relative">
+                        <button onclick="toggleDropdown()" class="flex items-center space-x-3 group cursor-pointer p-1.5 rounded-2xl hover:bg-white/5 transition-all outline-none">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-sm font-bold text-white group-hover:text-primary transition-colors">{{ (session.get('username') or 'User') }}</p>
+                                <p class="text-[9px] text-gray-500 uppercase tracking-widest font-black leading-tight">Patient Portal</p>
+                            </div>
+                            <div class="w-9 h-9 rounded-xl bg-dark-card border border-white/10 flex items-center justify-center text-xs font-bold text-primary shadow-neon group-hover:scale-105 transition-transform overflow-hidden">
+                                {% if session.get('profile_pic') %}
+                                    <img src="{{ session.get('profile_pic') }}" alt="Profile" class="w-full h-full object-cover">
+                                {% else %}
+                                    {{ (session.get('username') or 'User')[0].upper() }}
+                                {% endif %}
+                            </div>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 group-hover:text-white transition-colors"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdown" class="absolute right-0 mt-3 w-56 glass bg-dark/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden hidden animate__animated animate__fadeInUp animate__faster z-50">
+                            <div class="p-4 border-b border-white/5 bg-white/5">
+                                <p class="text-xs text-gray-500 uppercase font-black tracking-widest mb-1">Account</p>
+                                <p class="text-sm font-bold text-white truncate">{{ session.get('username') }}</p>
+                            </div>
+                            <div class="p-2">
+                                <a href="{{ url_for('profile') }}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition-all group/item {% if request.path == url_for('profile') %}bg-primary/5 text-primary{% endif %}">
+                                    <i data-lucide="user" class="w-4 h-4 {% if request.path == url_for('profile') %}text-primary{% else %}text-gray-500{% endif %} group-hover/item:text-primary"></i>
+                                    <span class="text-sm font-bold">Profile Settings</span>
+                                </a>
+                                <a href="{{ url_for('preferences') }}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition-all group/item {% if request.path == url_for('preferences') %}bg-primary/5 text-primary{% endif %}">
+                                    <i data-lucide="sliders" class="w-4 h-4 {% if request.path == url_for('preferences') %}text-primary{% else %}text-gray-500{% endif %} group-hover/item:text-primary"></i>
+                                    <span class="text-sm font-bold">Preferences</span>
+                                </a>
+                                <a href="{{ url_for('settings') }}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition-all group/item {% if request.path == url_for('settings') %}bg-primary/5 text-primary{% endif %}">
+                                    <i data-lucide="settings" class="w-4 h-4 {% if request.path == url_for('settings') %}text-primary{% else %}text-gray-500{% endif %} group-hover/item:text-primary"></i>
+                                    <span class="text-sm font-bold">System Settings</span>
+                                </a>
+                            </div>
+                            <div class="p-2 border-t border-white/5">
+                                <a href="{{ url_for('logout') }}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-500/10 text-red-500 transition-all group/item">
+                                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                                    <span class="text-sm font-bold">Logout</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% else %}
+                    <!-- Guest Links (Desktop) -->
+                    <div class="flex items-center space-x-6">
+                        <a href="{{ url_for('login') }}" class="text-xs font-black uppercase tracking-[0.3em] text-gray-500 hover:text-white transition-all hidden lg:block">Existing Patient Login</a>
+                        <a href="{{ url_for('register') }}" class="px-8 py-3.5 bg-primary text-black text-xs font-black uppercase tracking-[0.2em] rounded-xl hover:scale-105 hover:shadow-neon transition-all">Get Started Free</a>
+                    </div>
+                {% endif %}
             </div>
         </header>
-        {% endif %}
 
         <!-- Dynamic Content Body -->
         <main class="flex-1 {% if session.get('user_id') %}p-6 md:p-10 mb-20 md:mb-0{% endif %}">
@@ -284,12 +298,11 @@
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                 <!-- About Column -->
                 <div class="space-y-4">
-                    <div class="flex items-center space-x-3 mb-6">
-                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="w-8 h-8 object-contain">
-                        <span class="text-lg font-black tracking-tighter text-white">PP Health</span>
+                    <div class="flex items-center mb-6">
+                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="w-16 h-16 object-contain">
                     </div>
-                    <p class="text-gray-500 text-sm leading-relaxed">
-                        PP Health Tracker is an AI-powered health intelligence platform utilizing LSTM neural networks for predictive systemic analysis and high-fidelity diagnostic reporting.
+                    <p class="text-gray-500 text-xs font-medium leading-relaxed uppercase tracking-tighter">
+                        AI-Powered Predictive Health Tracker is an advanced clinical intelligence suite utilizing multi-stage LSTM neural networks for systemic wellness modeling and forensic diagnostic audits.
                     </p>
                 </div>
 
@@ -319,9 +332,10 @@
                 <div>
                     <h4 class="text-xs font-black uppercase tracking-widest text-white mb-6">Support & Privacy</h4>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-primary transition-colors">Help Center</a></li>
-                        <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
+                        <li><a href="{{ url_for('help_center') }}" class="hover:text-primary transition-colors">Help Center</a></li>
+                        <li><a href="{{ url_for('documentation') }}" class="hover:text-primary transition-colors">Documentation</a></li>
+                        <li><a href="{{ url_for('privacy_policy') }}" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+                        <li><a href="{{ url_for('terms_of_service') }}" class="hover:text-primary transition-colors">Terms of Service</a></li>
                         <li class="pt-4 flex space-x-4">
                             <a href="#" class="text-gray-600 hover:text-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
                             <a href="#" class="text-gray-600 hover:text-white transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
@@ -330,8 +344,8 @@
                 </div>
             </div>
             <div class="max-w-7xl mx-auto pt-12 mt-12 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center text-[10px] text-gray-600 uppercase tracking-widest font-black">
-                <p>© 2026 PP Health Group. All Rights Reserved.</p>
-                <p>Advanced Medical Intelligence Portal v2.4</p>
+                <p>© 2026 AI Health Intel Group. Global Clinical Standard.</p>
+                <p>System Architecture v3.0 | Predictive Neural Core</p>
             </div>
         </footer>
 
@@ -343,6 +357,7 @@
     <script>
         // Initialize Lucide Icons
         lucide.createIcons();
+
 
         // Dropdown Logic
         function toggleDropdown() {

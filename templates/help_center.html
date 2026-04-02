@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-16 animate__animated animate__fadeIn">
+    <!-- Help Center Hero -->
+    <section class="text-center space-y-6 pt-10">
+        <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em]">
+            Clinical Support Core
+        </div>
+        <h1 class="text-5xl md:text-7xl font-black text-white leading-tight uppercase italic italic">
+            Help <span class="text-primary italic tracking-tighter">Center</span>
+        </h1>
+        <p class="text-gray-500 max-w-2xl mx-auto font-bold leading-relaxed uppercase text-[10px] tracking-widest">
+            Guidance on interpreting neural diagnostics, managing systemic data, and achieving predictive wellness through the AI-Powered Health Tracker.
+        </p>
+    </section>
+
+    <!-- FAQ Grid -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="glass-card p-10 space-y-6 border-white/5 relative overflow-hidden group">
+            <h3 class="text-xl font-black text-white italic uppercase tracking-tighter">Interpreting Scores</h3>
+            <p class="text-gray-500 text-xs font-medium leading-relaxed uppercase tracking-widest">
+                The **Wellness Index** is a 0-100 score synthesized from your latest diagnostic audit. A score above 80 indicates a stable systemic baseline.
+            </p>
+            <div class="pt-4 border-t border-white/5">
+                <a href="#" class="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Read Score Technicals</a>
+            </div>
+        </div>
+
+        <div class="glass-card p-10 space-y-6 border-white/5 relative overflow-hidden group">
+            <h3 class="text-xl font-black text-white italic uppercase tracking-tighter">Data Synchronization</h3>
+            <p class="text-gray-500 text-xs font-medium leading-relaxed uppercase tracking-widest">
+                Your health markers are encrypted using AES-256 protocols and synced with your secure Google Identity for consistent multi-device analysis.
+            </p>
+            <div class="pt-4 border-t border-white/5">
+                <a href="#" class="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Encryption Standards</a>
+            </div>
+        </div>
+
+        <div class="glass-card p-10 space-y-6 border-white/5 relative overflow-hidden group">
+            <h3 class="text-xl font-black text-white italic uppercase tracking-tighter">Forensic Audits</h3>
+            <p class="text-gray-500 text-xs font-medium leading-relaxed uppercase tracking-widest">
+                Every audit creates a permanent clinical record. You can export these as PDF dossiers at any time via the **Patient Portfolio** interface.
+            </p>
+            <div class="pt-4 border-t border-white/5">
+                <a href="#" class="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Dossier Framework</a>
+            </div>
+        </div>
+
+        <div class="glass-card p-10 space-y-6 border-white/5 relative overflow-hidden group">
+            <h3 class="text-xl font-black text-white italic uppercase tracking-tighter">Systemic Alerts</h3>
+            <p class="text-gray-500 text-xs font-medium leading-relaxed uppercase tracking-widest">
+                Automated flags (CFD/CFS) are predictive identifiers. They are designed to highlight potential systemic fatigue before acute episodes occur.
+            </p>
+            <div class="pt-4 border-t border-white/5">
+                <a href="#" class="text-[10px] font-black text-primary uppercase tracking-widest hover:underline">Neural Alert logic</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Section -->
+    <section class="glass p-12 md:p-20 rounded-[40px] border-primary/20 text-center relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
+        <h2 class="text-3xl md:text-5xl font-black text-white italic uppercase tracking-tighter mb-8">Need Clinical Assistance?</h2>
+        <p class="text-gray-500 mb-12 max-w-xl mx-auto text-xs font-bold uppercase tracking-widest">
+            Our technical diagnostic team is available for system inquiries. For medical emergencies, please contact local health services immediately.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <a href="mailto:support@aihealthintel.com" class="px-10 py-5 bg-primary text-black font-black uppercase text-xs tracking-widest rounded-2xl shadow-neon hover:scale-105 transition-all">
+                Submit Support Ticket
+            </a>
+            <a href="#" class="px-10 py-5 glass border-white/10 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-white/5 transition-all text-white">
+                Technical Documentation
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}

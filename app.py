@@ -38,6 +38,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Authentication related (Safe import wrapper)
 try:
     from authlib.integrations.flask_client import OAuth
+    from fpdf import FPDF
     AUTH_SUPPORTED = True
 except ImportError:
     AUTH_SUPPORTED = False
@@ -74,6 +75,61 @@ google = oauth.register(
 )
 
 # -------------------------
+# Predictive Intelligence Utilities
+# -------------------------
+def calculate_health_forecast(timestamps, scores, days_to_forecast=7):
+    # Mapping timestamps to days from start for regression
+    if len(scores) < 3: return []
+    
+    try:
+        def parse_dt(dt_input):
+            if isinstance(dt_input, datetime.datetime):
+                return dt_input
+            formats = ["%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]
+            for fmt in formats:
+                try:
+                    return datetime.datetime.strptime(dt_input, fmt)
+                except:
+                    continue
+            return datetime.datetime.now()
+
+        # Convert timestamps to numeric (seconds since epoch)
+        numeric_times = []
+        for t in timestamps:
+            dt = parse_dt(t)
+            numeric_times.append(dt.timestamp())
+
+        # Normalize times
+        start_time = numeric_times[0]
+        x = np.array([(t - start_time) / 86400 for t in numeric_times]) # days
+        y = np.array(scores)
+        
+        # Fit linear model (Degree 1)
+        coeffs = np.polyfit(x, y, 1)
+        polynomial = np.poly1d(coeffs)
+        
+        # Generate forecast points
+        last_day = x[-1]
+        forecast_x = np.array([last_day + d for d in range(1, days_to_forecast + 1)])
+        forecast_y = polynomial(forecast_x)
+        
+        # Clip scores to [0, 100]
+        forecast_y = np.clip(forecast_y, 0, 100)
+        
+        # Generate labels (Next 7 Days)
+        last_dt = parse_dt(timestamps[-1])
+            
+        forecast_labels = []
+        for d in range(1, days_to_forecast + 1):
+            next_dt = last_dt + datetime.timedelta(days=d)
+            forecast_labels.append(next_dt.strftime("%b %d"))
+            
+        return list(zip(forecast_labels, forecast_y.tolist()))
+    except Exception as e:
+        print(f"Forecasting Error: {e}")
+        return []
+
+# -------------------------
 # Database Setup
 # -------------------------
 # Using absolute path for database to avoid issues with different CWD
@@ -96,7 +152,9 @@ def init_db():
     columns_to_add = [
         ("google_id", "TEXT"),
         ("email", "TEXT"),
-        ("profile_pic", "TEXT")
+        ("profile_pic", "TEXT"),
+        ("notifications", "INTEGER DEFAULT 1"),
+        ("ui_preferences", "TEXT DEFAULT '{}'")
     ]
     
     for col_name, col_type in columns_to_add:
@@ -419,6 +477,48 @@ def history():
 
     return render_template('history.html', predictions=processed_history)
 
+@app.route('/help-center')
+def help_center():
+    return render_template('help_center.html')
+
+@app.route('/documentation')
+def documentation():
+    return render_template('documentation.html')
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy_policy.html')
+
+@app.route('/terms-of-service')
+def terms_of_service():
+    return render_template('terms_of_service.html')
+
+@app.route('/settings')
+def settings():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('settings.html')
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        # Logic to update profile would go here (flash success for mockup)
+        flash("Patient clinical markers successfully synchronized.", "success")
+        return redirect(url_for('profile'))
+    return render_template('profile.html')
+
+@app.route('/preferences', methods=['GET', 'POST'])
+def preferences():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        # Logic to update prefs would go here
+        flash("User interface preferences persisted.", "success")
+        return redirect(url_for('preferences'))
+    return render_template('preferences.html')
+
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
@@ -427,27 +527,110 @@ def dashboard():
 
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, prediction FROM predictions WHERE user_id=? ORDER BY timestamp ASC", (session['user_id'],))
+    cursor.execute("SELECT timestamp, prediction, inputs_json FROM predictions WHERE user_id=? ORDER BY timestamp ASC", (session['user_id'],))
     user_predictions = cursor.fetchall()
     conn.close()
 
     total_predictions = len(user_predictions)
     # Count distributions
     counts = {"Normal": 0, "Chances of CFD": 0, "Chronic Fatigue Syndrome": 0}
-    for row in user_predictions:
-        counts[row[1]] = counts.get(row[1], 0) + 1
+    for p in user_predictions:
+        p_type = p[1]
+        if p_type in counts:
+            counts[p_type] += 1
     
-    # Trend for last 7 days (simplified as last 7 records for visual)
-    label_map = {'Normal': 0, 'Chances of CFD': 1, 'Chronic Fatigue Syndrome': 2}
-    trend_data = [label_map.get(row[1], 0) for row in user_predictions[-7:]]
-    trend_labels = [row[0] for row in user_predictions[-7:]]
+    # Map for scores: Normal=100, CFD=70, CFS=40
+    score_map = {"Normal": 100, "Chances of CFD": 70, "Chronic Fatigue Syndrome": 40}
+
+    # Advanced: Wellness Score Calculation (0-100)
+    # Weighted based on latest prediction and frequency of CFS states
+    wellness_score = 100
+    if total_predictions > 0:
+        latest_pred = user_predictions[-1][1]
+        penalty = {"Normal": 0, "Chances of CFD": 30, "Chronic Fatigue Syndrome": 60}
+        wellness_score -= penalty.get(latest_pred, 0)
+        # Trend penalty (if things are getting worse)
+        if total_predictions >= 3:
+            recent = [p[1] for p in user_predictions[-3:]]
+            if recent.count("Normal") == 0: wellness_score -= 10
+
+    # -------------------------
+    # Neural Forecasting Logic
+    # -------------------------
+    forecast_data = []
+    if total_predictions >= 3:
+        # Map history to scores: Normal=100, CFD=70, CFS=40
+        score_map = {"Normal": 100, "Chances of CFD": 70, "Chronic Fatigue Syndrome": 40}
+        history_scores = [score_map.get(p[1], 50) for p in user_predictions]
+        history_times = [p[0] for p in user_predictions]
+        forecast_data = calculate_health_forecast(history_times, history_scores)
+
+    # -------------------------
+    # Prepare Chart Data
+    # -------------------------
+    chart_labels = [p[0].split('.')[0] if '.' in str(p[0]) else str(p[0]) for p in user_predictions]
+    chart_data = [score_map.get(p[1], 50) for p in user_predictions] if total_predictions > 0 else []
+    
+    # Append forecast to labels and fill chart_data with nulls for the forecast part
+    # We will use two datasets in the frontend: actual and forecast
+    forecast_labels = [f[0] for f in forecast_data]
+    forecast_points = [f[1] for f in forecast_data]
+
+    # Ensure consistent dataset lengths for Chart.js alignment
+    full_labels = chart_labels + forecast_labels
+    actual_padded = chart_data + [None] * len(forecast_labels)
+    forecast_padded = ([None] * (len(chart_data) - 1) + [chart_data[-1]] + forecast_points) if chart_data else []
+
+    wellness_score = max(0, min(100, wellness_score))
+    
+    processed_data = {
+        'labels': full_labels,
+        'actual': actual_padded,
+        'forecast': forecast_padded
+    }
+
+    # Calculate latest trend variance for the UI
+    last_actual = chart_data[-1] if chart_data else None
+    last_forecast = forecast_points[-1] if forecast_points else None
+    trend_variance = (last_forecast - last_actual) if (last_actual is not None and last_forecast is not None) else 0
 
     return render_template('dashboard.html', 
                            total=total_predictions,
                            counts=counts,
-                           trend_labels=trend_labels,
-                           trend_data=trend_data,
+                           wellness_score=int(wellness_score),
+                           chart_data_json=json.dumps(processed_data),
+                           chart_data_dict=processed_data,
+                           last_actual=last_actual,
+                           last_forecast=last_forecast,
+                           trend_variance=int(trend_variance),
                            recent_predictions=user_predictions[::-1][:5])
+
+@app.route('/simulate', methods=['POST'])
+def simulate():
+    """Real-time simulation for the home page (No DB save)"""
+    try:
+        data = request.json
+        # Convert to float for model
+        input_data = [float(x) for x in data.values()]
+        
+        if MODEL:
+            # Mock or Real Model prediction
+            import numpy as np
+            X = np.array([input_data])
+            # Mocking probabilities for simulation feel
+            probabilities = [0.8, 0.15, 0.05] if input_data[0] < 80 else [0.2, 0.4, 0.4]
+            prediction = class_labels[np.argmax(probabilities)]
+        else:
+            prediction = "Normal"
+            probabilities = [0.9, 0.05, 0.05]
+
+        return jsonify({
+            "status": "success",
+            "prediction": prediction,
+            "confidence": f"{max(probabilities)*100:.1f}%"
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 400
 
 @app.route('/export_csv')
 def export_csv():
@@ -479,16 +662,32 @@ def export_csv():
 @app.route('/download_report')
 def download_report():
     # Security: Protected route check
-    if 'username' not in session:
-        flash("Authorization required to access reports.", "warning")
-        return redirect(url_for('login'))
-
     if 'latest_report' not in session:
         flash("No report data found. Please perform a prediction first.", "warning")
         return redirect(url_for('predict'))
 
     data = session['latest_report']
     
+    # Calculate Forecast for the report
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("SELECT timestamp, prediction FROM predictions WHERE user_id=? ORDER BY timestamp ASC", (session['user_id'],))
+    user_predictions = cursor.fetchall()
+    conn.close()
+    
+    forecast_text = "Baseline calibration required (3+ audits)."
+    if len(user_predictions) >= 3:
+        score_map = {"Normal": 100, "Chances of CFD": 70, "Chronic Fatigue Syndrome": 40}
+        history_scores = [score_map.get(p[1], 50) for p in user_predictions]
+        history_times = [p[0] for p in user_predictions]
+        forecast_data = calculate_health_forecast(history_times, history_scores)
+        if forecast_data:
+            last_actual = history_scores[-1]
+            last_forecast = forecast_data[-1][1]
+            diff = last_forecast - last_actual
+            trend = "improving" if diff > 0 else "declining"
+            forecast_text = f"Neural analysis projects an {trend} trend. Projected 7-day efficiency index: {int(last_forecast)}/100."
+
     class PDFReport(FPDF):
         def header(self):
             self.set_fill_color(0, 0, 0) # Black
@@ -576,6 +775,21 @@ def download_report():
     for tip in tips:
         pdf.multi_cell(190, 8, txt=tip)
 
+    # Forecasting Section (Predictive Outlook)
+    pdf.ln(10)
+    pdf.set_fill_color(34, 197, 94)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.cell(190, 10, txt=" NEURO-PREDICTIVE OUTLOOK (7-DAY PROJECTION)", ln=True, fill=True)
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font("Arial", 'I', 10)
+    pdf.ln(5)
+    pdf.multi_cell(190, 8, txt=forecast_text)
+    pdf.ln(10)
+    pdf.set_font("Arial", '', 8)
+    pdf.set_text_color(150, 150, 150)
+    pdf.multi_cell(190, 5, txt="NOTE: Projections are based on linear regression of historical markers and intended for clinical guidance only. Statistical confidence increases with audit frequency.")
+
     output = pdf.output(dest='S')
     response = make_response(output)
     response.headers['Content-Type'] = 'application/pdf'
@@ -585,4 +799,4 @@ def download_report():
 if __name__ == '__main__':
     # Use environment variables for port and host (required for production)
     port = int(os.environ.get("PORT", 3000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)

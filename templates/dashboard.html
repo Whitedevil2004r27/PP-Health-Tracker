@@ -8,8 +8,18 @@
         <!-- Background accents -->
         <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-700"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div class="space-y-4 text-center md:text-left">
+            <div class="relative w-40 h-40 flex items-center justify-center animate__animated animate__zoomIn">
+                <svg class="w-full h-full transform -rotate-90">
+                    <circle cx="80" cy="80" r="70" stroke="currentColor" stroke-width="8" fill="transparent" class="text-white/5" />
+                    <circle id="wellnessCircle" cx="80" cy="80" r="70" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="440" stroke-dashoffset="440" class="text-primary transition-all duration-1000 ease-out" style="filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.4));" />
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span id="scoreValue" class="text-4xl font-black text-white italic tracking-tighter">0</span>
+                    <span class="text-[8px] font-black text-gray-500 uppercase tracking-widest">Wellness Index</span>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-center md:text-left flex-1">
                 <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] animate__animated animate__fadeInLeft">
                     Neural Analytics Integrated
                 </div>
@@ -103,27 +113,80 @@
     <!-- Analytics Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Trend Line -->
-        <div class="lg:col-span-2 glass-card p-10 space-y-10 border-white/5">
-            <div class="flex items-center justify-between">
-                <h3 class="font-black text-gray-600 tracking-[0.4em] text-[10px] uppercase italic">Systemic Progression Audit</h3>
-                <div class="flex space-x-4 text-[9px] uppercase font-black text-gray-800">
-                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-primary shadow-neon"></span> <span>Neural Risk Window</span></span>
+        <div class="lg:col-span-2 glass-card p-10 space-y-8 border-white/5 relative overflow-hidden">
+            <div class="flex items-center justify-between relative z-10">
+                <div>
+                    <h3 class="font-black text-gray-500 tracking-[0.4em] text-[10px] uppercase italic">Systemic Wellness Progression</h3>
+                    <p class="text-[8px] text-primary font-bold uppercase tracking-widest mt-1">Real-time LSTM Audit Visualizer</p>
+                </div>
+                <div class="flex space-x-4 text-[9px] uppercase font-black text-gray-400">
+                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full bg-primary shadow-neon"></span> <span>Historical Index</span></span>
+                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded-full border border-dashed border-primary"></span> <span>Neural Forecast</span></span>
                 </div>
             </div>
-            <div class="h-80">
+            <div class="h-80 relative z-10">
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
 
+        <!-- Neural Outlook Projection -->
+        <div class="lg:col-span-1 glass-card p-10 flex flex-col space-y-8 border-white/5 relative overflow-hidden group">
+            <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all duration-700"></div>
+            <h3 class="font-black text-gray-500 tracking-[0.4em] text-[10px] uppercase italic relative z-10">Neural Outlook</h3>
+            
+            {% set forecast_data = chart_data_dict.forecast %}
+            {% if last_forecast is not none %}
+                {% set diff = trend_variance %}
+                
+                <div class="space-y-6 relative z-10">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">7-Day Trajectory</span>
+                        <span class="px-2 py-1 rounded bg-primary/10 text-primary text-[8px] font-black uppercase">Active Projection</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-1">
+                            <p class="text-3xl font-black text-white italic tracking-tighter">
+                                {{ '+' if diff > 0 else '' }}{{ diff }}%
+                            </p>
+                            <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest">Projected Variance</p>
+                        </div>
+                        <div class="w-px h-10 bg-white/10"></div>
+                        <div class="flex-1">
+                            <p class="text-3xl font-black text-primary italic tracking-tighter">
+                                {{ last_forecast|round|int }}
+                            </p>
+                            <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest">Efficiency Index</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+                        <p class="text-[9px] font-bold text-gray-400 italic leading-relaxed">
+                            Neural analysis suggests a <span class="text-primary">{{ 'positive' if diff >= 0 else 'corrective' }}</span> 
+                            trend in your systemic markers over the next assessment cycle.
+                        </p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="flex-1 flex flex-col items-center justify-center text-center space-y-4 opacity-50">
+                    <i data-lucide="brain-circuit" class="w-12 h-12 text-gray-700"></i>
+                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest leading-relaxed">Requires 3 historical audits for neural calibration.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Stats & Activity Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Distribution Donut -->
-        <div class="lg:col-span-1 glass-card p-10 space-y-10 border-white/5">
+        <div class="glass-card p-10 space-y-10 border-white/5">
             <h3 class="font-black text-gray-600 tracking-[0.4em] text-[10px] uppercase italic">Diagnosis Distribution</h3>
             <div class="h-64 relative">
                 <canvas id="donutChart"></canvas>
                 <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div class="text-center">
                         <p class="text-4xl font-black text-white italic tracking-tighter">{{ total }}</p>
-                        <p class="text-[8px] text-gray-800 font-black uppercase tracking-widest">Total Indexed</p>
+                        <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest">Total Indexed</p>
                     </div>
                 </div>
             </div>
@@ -142,12 +205,9 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Lower Row: Activity & Actions -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Recent Activity Feed -->
-        <div class="glass-card p-10 space-y-10 border-white/5">
+        <div class="glass-card p-10 space-y-10 border-white/5 lg:col-span-1">
             <div class="flex items-center justify-between">
                 <h3 class="font-black text-gray-600 tracking-[0.4em] text-[10px] uppercase italic">Neural Activity Feed</h3>
                 <a href="{{ url_for('history') }}" class="text-primary text-[9px] font-black uppercase tracking-widest hover:underline">Full System History</a>
@@ -160,10 +220,10 @@
                         <div class="flex items-center space-x-6">
                             <div>
                                 <h4 class="font-black text-white uppercase italic text-sm group-hover:text-primary transition-colors tracking-tight">{{ p[1] }}</h4>
-                                <p class="text-[8px] font-black text-gray-700 uppercase tracking-widest">{{ p[0] }}</p>
+                                <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest">{{ p[0] }}</p>
                             </div>
                         </div>
-                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-800 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
+                        <i data-lucide="arrow-right" class="w-4 h-4 text-gray-500 group-hover:text-primary group-hover:translate-x-1 transition-all"></i>
                     </div>
                     {% endfor %}
                 {% else %}
@@ -176,7 +236,7 @@
         </div>
 
         <!-- Quick Hub -->
-        <div class="glass-card p-10 flex flex-col space-y-10 border-white/5">
+        <div class="glass-card p-10 flex flex-col space-y-10 border-white/5 lg:col-span-1">
              <h3 class="font-black text-gray-600 tracking-[0.4em] text-[10px] uppercase italic">Direct System Hub</h3>
              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
                  <a href="{{ url_for('predict') }}" class="glass hover:bg-white/5 p-8 flex flex-col items-center justify-center text-center space-y-4 border-white/5 group transition-all">
@@ -211,6 +271,39 @@
 <script>
     lucide.createIcons();
 
+    // Wellness Score Animation
+    const score = {{ wellness_score or 0 }};
+    const circle = document.getElementById('wellnessCircle');
+    if (circle) {
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (score / 100 * circumference);
+        
+        // Set initial stroke
+        circle.style.strokeDasharray = `${circumference}`;
+        circle.style.strokeDashoffset = `${circumference}`;
+
+        setTimeout(() => {
+            circle.style.strokeDashoffset = offset;
+            animateNumber('scoreValue', score);
+        }, 500);
+    }
+
+    function animateNumber(id, target) {
+        const el = document.getElementById(id);
+        let current = 0;
+        const step = target / 50;
+        const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+                el.innerText = target;
+                clearInterval(timer);
+            } else {
+                el.innerText = Math.floor(current);
+            }
+        }, 30);
+    }
+
     const h = new Date().getHours();
     const greeting = h < 12 ? 'Good Morning,' : h < 18 ? 'Good Afternoon,' : 'Good Evening,';
     document.getElementById('greetingText').innerText = greeting;
@@ -231,63 +324,95 @@
         update();
     });
 
-    const lineCtx = document.getElementById('lineChart').getContext('2d');
-    new Chart(lineCtx, {
-        type: 'line',
-        data: {
-            labels: {{ trend_labels|tojson }},
-            datasets: [{
-                data: {{ trend_data|tojson }},
-                borderColor: '#22c55e',
-                backgroundColor: 'rgba(34, 197, 94, 0.05)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#22c55e',
-                pointBorderWidth: 4,
-                pointRadius: 4,
-                borderWidth: 4
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { display: false },
-                y: {
-                    min: 0,
-                    max: 2,
-                    grid: { color: 'rgba(255,255,255,0.02)' },
-                    ticks: {
-                        color: '#4b5563',
-                        font: { weight: 'black', size: 10 },
-                        callback: function(v) { return ['Norm', 'CFD', 'CFS'][v]; }
+    let lineChart, donutChart;
+
+    function renderCharts() {
+        const isLight = document.body.classList.contains('light-mode');
+        const gridColor = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.02)';
+        const labelColor = isLight ? '#475569' : '#94a3b8';
+
+        if(lineChart) lineChart.destroy();
+        if(donutChart) donutChart.destroy();
+
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        const processedData = {{ chart_data_json|safe }};
+        
+        lineChart = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: processedData.labels,
+                datasets: [
+                    {
+                        label: 'Historical Index',
+                        data: processedData.actual,
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#22c55e',
+                        pointRadius: 4,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Neural Forecast',
+                        data: processedData.forecast,
+                        borderColor: '#22c55e',
+                        borderDash: [5, 5],
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: labelColor, font: { size: 9, weight: 'bold' } }
+                    },
+                    y: {
+                        min: 0,
+                        max: 100,
+                        grid: { color: gridColor },
+                        ticks: {
+                            color: labelColor,
+                            font: { weight: 'black', size: 10 },
+                            stepSize: 20
+                        }
                     }
                 }
             }
-        }
-    });
+        });
 
-    const donutCtx = document.getElementById('donutChart').getContext('2d');
-    new Chart(donutCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Normal', 'Flagged', 'Critical'],
-            datasets: [{
-                data: [
-                    {{ counts.get('Normal', 0) }},
-                    {{ counts.get('Chances of CFD', 0) }},
-                    {{ counts.get('Chronic Fatigue Syndrome', 0) }}
-                ],
-                backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
-                borderWidth: 0,
-                hoverOffset: 15
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            cutout: '80%',
-            plugins: { legend: { display: false } }
-        }
-    });
+        const donutCtx = document.getElementById('donutChart').getContext('2d');
+        donutChart = new Chart(donutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Normal', 'Flagged', 'Critical'],
+                datasets: [{
+                    data: [
+                        {{ counts.get('Normal', 0) }},
+                        {{ counts.get('Chances of CFD', 0) }},
+                        {{ counts.get('Chronic Fatigue Syndrome', 0) }}
+                    ],
+                    backgroundColor: ['#22c55e', '#f59e0b', '#ef4444'],
+                    borderWidth: 0,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                cutout: '80%',
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    renderCharts();
+    window.addEventListener('themeChanged', renderCharts);
 </script>
 {% endblock %}

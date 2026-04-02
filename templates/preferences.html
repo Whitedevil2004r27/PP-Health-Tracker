@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-12 animate__animated animate__fadeIn">
+    <!-- Preferences Hero -->
+    <section class="text-center md:text-left space-y-6 pt-10">
+        <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black uppercase tracking-[0.2em]">
+            UI Customization Portal
+        </div>
+        <h1 class="text-5xl md:text-7xl font-black text-white leading-tight uppercase italic italic">
+            Patient <span class="text-blue-500 italic tracking-tighter">Preferences</span>
+        </h1>
+        <p class="text-gray-500 max-w-2xl mx-auto md:mx-0 font-bold leading-relaxed uppercase text-[10px] tracking-widest">
+            Adjust the density of clinical markers, synchronize neural chart color palettes, and optimize animation performance for your diagnostic experience.
+        </p>
+    </section>
+
+    <!-- Preferences Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+        <!-- Application Density -->
+        <div class="glass-card p-8 border-white/5 space-y-8 flex flex-col items-center text-center group">
+            <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20 shadow-neon">
+                <i data-lucide="layout" class="w-8 h-8"></i>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-xl font-black text-white uppercase italic tracking-tighter leading-tight">UI Density</h3>
+                <div class="flex flex-col space-y-3">
+                    <button class="px-6 py-3 rounded-xl bg-blue-500 text-black text-[10px] font-black uppercase tracking-widest transition-all">Comfortable</button>
+                    <button class="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all">Compact</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Color Palette -->
+        <div class="glass-card p-8 border-white/5 space-y-8 flex flex-col items-center text-center group">
+            <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
+                <i data-lucide="palette" class="w-8 h-8"></i>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-xl font-black text-white uppercase italic tracking-tighter leading-tight">Chart Palette</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-full cursor-pointer border-2 border-white/20 ring-4 ring-primary/20"></div>
+                    <div class="w-10 h-10 bg-blue-500 rounded-full cursor-pointer hover:ring-4 hover:ring-blue-500/20 transition-all"></div>
+                    <div class="w-10 h-10 bg-amber-500 rounded-full cursor-pointer hover:ring-4 hover:ring-amber-500/20 transition-all"></div>
+                    <div class="w-10 h-10 bg-purple-500 rounded-full cursor-pointer hover:ring-4 hover:ring-purple-500/20 transition-all"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Animation Engine -->
+        <div class="glass-card p-8 border-white/5 space-y-8 flex flex-col items-center text-center group">
+            <div class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 border border-amber-500/20">
+                <i data-lucide="zap" class="w-8 h-8"></i>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-xl font-black text-white uppercase italic tracking-tighter leading-tight">Animations</h3>
+                <div class="w-full flex items-center justify-between px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Smooth</span>
+                    <input type="range" class="w-24 accent-amber-500">
+                    <span class="text-[9px] font-black text-amber-500 uppercase tracking-widest">Fluid</span>
+                </div>
+                <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">Adjust systemic transit speeds</p>
+            </div>
+        </div>
+
+        <!-- Persistence Save -->
+        <div class="md:col-span-3">
+            <form action="{{ url_for('preferences') }}" method="POST">
+                <button type="submit" class="w-full h-16 bg-blue-500 text-black font-black uppercase text-xs tracking-[0.4em] rounded-2xl shadow-neon hover:scale-[1.01] transition-all">
+                    Commit UI Archetype
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
