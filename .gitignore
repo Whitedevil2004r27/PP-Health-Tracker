@@ -3,11 +3,5 @@ __pycache__/
 *.pyc
 .env
 users.db
-cat_imputer.pkl
-num_imputer.pkl
-scaler.pkl
-label_encoders.pkl
-target_encoder.pkl
-lstm_multiclass_model.h5
 catboost_info/
 static/pdf_reports/
