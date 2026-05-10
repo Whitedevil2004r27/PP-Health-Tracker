@@ -171,7 +171,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
                             {% for opt in label_encoders['exercise_frequency'].classes_ %}
                             <label class="cursor-pointer">
-                                <input type="radio" name="exercise_frequency" value="{{ opt }}" class="hidden peer" required {% if opt == 'Sometimes' %}checked{% endif %}>
+                                <input type="radio" name="exercise_frequency" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
                                 <div class="h-16 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all text-center px-2">
                                     <span class="text-[9px] font-bold uppercase tracking-widest">{{ opt }}</span>
                                 </div>
@@ -186,7 +186,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
                             {% for opt in label_encoders['social_activity_level'].classes_ %}
                             <label class="cursor-pointer">
-                                <input type="radio" name="social_activity_level" value="{{ opt }}" class="hidden peer" required {% if opt == 'Medium' %}checked{% endif %}>
+                                <input type="radio" name="social_activity_level" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
                                 <div class="h-16 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all text-center px-2">
                                     <span class="text-[9px] font-bold uppercase tracking-widest">{{ opt }}</span>
                                 </div>
