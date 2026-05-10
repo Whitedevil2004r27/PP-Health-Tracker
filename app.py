@@ -479,6 +479,21 @@ def predict():
                 }
                 flash("Neural Audit synchronized successfully.", "success")
 
+        except psycopg2.errors.UniqueViolation as e:
+            # Self-healing: Reset sequence if out of sync
+            print(f"DATABASE SEQUENCE DESYNC DETECTED: {e}")
+            try:
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                cursor.execute("SELECT setval('predictions_id_seq', COALESCE((SELECT MAX(id)+1 FROM predictions), 1), false);")
+                # Retry insertion
+                cursor.execute("INSERT INTO predictions (user_id, timestamp, prediction, inputs_json) VALUES (%s, %s, %s, %s)", 
+                               (session['user_id'], datetime.datetime.now(), prediction, inputs_json))
+                conn.commit()
+                conn.close()
+                error_msg = None
+            except Exception as retry_e:
+                error_msg = f"Database Critical Error: {str(retry_e)}"
         except Exception as e:
             error_msg = str(e)
             prob_img = None  # Ensure variable exists on error
