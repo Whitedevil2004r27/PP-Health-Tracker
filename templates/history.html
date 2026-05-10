@@ -38,7 +38,7 @@
             </div>
             <div>
                 <p class="text-[9px] font-black uppercase text-gray-700 tracking-[0.4em]">Latest Sync</p>
-                <p class="text-xl font-black text-white italic tracking-tight">{{ predictions[0].timestamp[:10] if predictions else 'None' }}</p>
+                <p class="text-xl font-black text-white italic tracking-tight">{{ predictions[0].timestamp.strftime('%Y-%m-%d') if predictions else 'None' }}</p>
             </div>
         </div>
 
@@ -212,7 +212,7 @@
                 {{ 0 if 'Normal' in p.prediction else 1 if 'Chances' in p.prediction else 2 }},
             {% endfor %}
         ];
-        const historyLabels = [{% for p in predictions[::-1] %} "{{ p.timestamp[:10] }}", {% endfor %}];
+        const historyLabels = [{% for p in predictions[::-1] %} "{{ p.timestamp.strftime('%Y-%m-%d') }}", {% endfor %}];
     {% else %}
         const historyData = [];
         const historyLabels = [];

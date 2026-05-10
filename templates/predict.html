@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <form action="{{ url_for('predict') }}" method="POST" id="predictForm" class="p-6 md:p-10 space-y-8 md:space-y-12">
+            <form action="{{ url_for('predict') }}" method="POST" id="predictForm" class="p-6 md:p-10 space-y-8 md:space-y-12 pb-24 md:pb-10">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
                 <!-- STEP 1: Personal Info -->
