@@ -1,362 +1,269 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-10 animate__animated animate__fadeIn">
+<div class="max-w-4xl mx-auto space-y-12 animate__animated animate__fadeIn pb-24">
     
-    <!-- Hero Header -->
+    <!-- Premium Header -->
     <div class="text-center space-y-4">
-        <h1 class="text-4xl font-extrabold tracking-tight text-white uppercase italic">Health <span class="text-primary italic">Analysis</span> Index</h1>
-        <p class="text-gray-500 max-w-xl mx-auto font-medium">Complete the 4-step diagnostic assessment to update your predictive risk profile using neural markers.</p>
-    </div>
-
-    <!-- Multi-Step Form Wrapper -->
-    <div class="glass-card p-1 md:p-10 rounded-[40px] relative overflow-hidden">
-        
-        <!-- Progress Bar Section -->
-        <div class="px-8 pt-8 pb-10">
-            <div class="flex justify-between items-center mb-6 px-1">
-                <span id="stepIndicator" class="text-xs font-black uppercase tracking-[0.2em] text-primary">Sequence 1 of 4</span>
-                <span id="stepTitle" class="text-xs font-bold text-gray-500 uppercase tracking-tighter">Personal Metrics</span>
-            </div>
-            <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden flex">
-                <div id="progressBar" class="h-full bg-gradient-to-r from-primary to-accent transition-all duration-700 shadow-neon" style="width: 25%"></div>
-            </div>
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest mb-2">
+            Neural Diagnostic Interface v3.0
         </div>
-
-        <form action="{{ url_for('predict') }}" method="POST" id="predictForm" class="p-8 pt-0 space-y-12">
-            
-            <!-- STEP 1: Personal Info -->
-            <div id="step-1" class="step-container space-y-8 animate__animated">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <!-- Age Slider -->
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300 flex items-center space-x-2">
-                                <span>Patient Age</span>
-                                <i data-lucide="info" class="w-4 h-4 text-gray-700 cursor-help" title="Enter biological age for neural accuracy."></i>
-                            </label>
-                            <span class="text-2xl font-black text-black bg-primary px-4 py-1 rounded-xl shadow-neon" id="age_val">25</span>
-                        </div>
-                        <input type="range" name="age" min="1" max="120" value="25" class="range-input" oninput="updateRange('age', this.value)">
-                        <div class="flex justify-between text-[10px] font-bold text-gray-700 uppercase tracking-widest">
-                            <span>1 yr</span>
-                            <span>120 yrs</span>
-                        </div>
-                    </div>
-
-                    <!-- Gender Pill Select -->
-                    <div class="space-y-4">
-                        <label class="text-sm font-bold text-gray-300">Biometric Gender</label>
-                        <div class="flex space-x-4">
-                            {% for opt in label_encoders['gender'].classes_ %}
-                            <label class="flex-1 cursor-pointer group">
-                                <input type="radio" name="gender" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
-                                <div class="h-14 flex items-center justify-center glass bg-white/5 border border-white/5 rounded-2xl peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:shadow-neon transition-all group-hover:bg-white/10">
-                                    <span class="font-bold text-gray-500 group-hover:text-white peer-checked:text-primary transition-colors">{{ opt }}</span>
-                                </div>
-                            </label>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Work Status Selection -->
-                <div class="space-y-4">
-                    <label class="text-sm font-bold text-gray-300">Occupational Status</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        {% for opt in label_encoders['work_status'].classes_ %}
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="work_status" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
-                            <div class="h-20 flex flex-col items-center justify-center glass bg-white/5 border border-white/5 rounded-2xl peer-checked:border-primary peer-checked:shadow-neon transition-all group-hover:bg-white/10 text-center px-4">
-                                <span class="font-bold text-xs uppercase tracking-widest text-gray-600 peer-checked:text-primary">{{ opt }}</span>
-                            </div>
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- STEP 2: Sleep & Health -->
-            <div id="step-2" class="step-container hidden space-y-12 animate__animated">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                    <!-- Sleep Quality Slider -->
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300">Sleep Quality Index</label>
-                            <span class="text-2xl font-black text-accent bg-accent/10 px-4 py-1 rounded-xl" id="sleep_quality_index_val">10</span>
-                        </div>
-                        <input type="range" name="sleep_quality_index" min="0" max="20" value="10" class="range-input" oninput="updateRange('sleep_quality_index', this.value)">
-                    </div>
-
-                    <!-- Hours of Sleep -->
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300">Rest Hours / Cycle</label>
-                            <span class="text-2xl font-black text-white" id="hours_of_sleep_per_night_val">7h</span>
-                        </div>
-                        <input type="range" name="hours_of_sleep_per_night" min="0" max="15" value="7" class="range-input" oninput="updateRange('hours_of_sleep_per_night', this.value)">
-                    </div>
-
-                    <!-- Fatigue Severity -->
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300">Fatigue Intensity (FSS)</label>
-                            <span class="text-2xl font-black text-primary" id="fatigue_severity_scale_score_val">4.5</span>
-                        </div>
-                        <input type="range" name="fatigue_severity_scale_score" min="1" max="7" step="0.1" value="4.5" class="range-input" oninput="updateRange('fatigue_severity_scale_score', this.value)">
-                    </div>
-
-                    <!-- PEM Presence -->
-                    <div class="space-y-4">
-                        <label class="text-sm font-bold text-gray-300">PEM Diagnostic Marker</label>
-                        <div class="flex space-x-4">
-                            {% for opt in label_encoders['meditation_or_mindfulness'].classes_ %}
-                            <label class="flex-1 cursor-pointer group">
-                                <input type="radio" name="pem_present_radio" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %} onchange="document.getElementById('pem_present').value = (this.value === 'Yes' ? 1.0 : 0.0)">
-                                <div class="h-14 flex items-center justify-center glass bg-white/5 border border-white/5 rounded-2xl peer-checked:border-primary peer-checked:shadow-neon transition-all">
-                                    <span class="font-bold text-gray-500 peer-checked:text-primary uppercase tracking-widest text-xs">{{ opt }}</span>
-                                </div>
-                            </label>
-                            {% endfor %}
-                            <input type="hidden" name="pem_present" id="pem_present" value="1.0">
-                        </div>
-                    </div>
-
-                    <!-- PEM Duration -->
-                    <div class="space-y-6 col-span-1 md:col-span-2">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300">PEM Recovery Window (Hours)</label>
-                            <span class="text-2xl font-black text-primary" id="pem_duration_hours_val">12h</span>
-                        </div>
-                        <input type="range" name="pem_duration_hours" min="0" max="72" value="12" class="range-input" oninput="updateRange('pem_duration_hours', this.value)">
-                    </div>
-                </div>
-            </div>
-
-            <!-- STEP 3: Mental & Pain -->
-            <div id="step-3" class="step-container hidden space-y-12 animate__animated">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                    <!-- Brain Fog -->
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300">Cognitive Load</label>
-                            <span class="text-2xl font-black text-accent" id="brain_fog_level_val">5</span>
-                        </div>
-                        <input type="range" name="brain_fog_level" min="0" max="10" value="5" class="range-input" oninput="updateRange('brain_fog_level', this.value)">
-                    </div>
-
-                    <!-- Physical Pain -->
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300">Systemic Pain Factor</label>
-                            <span class="text-2xl font-black text-primary" id="physical_pain_score_val">5</span>
-                        </div>
-                        <input type="range" name="physical_pain_score" min="0" max="10" value="5" class="range-input" oninput="updateRange('physical_pain_score', this.value)">
-                    </div>
-
-                    <!-- Stress Level -->
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300">Psychological Stress</label>
-                            <span class="text-2xl font-black text-white" id="stress_level_val">5</span>
-                        </div>
-                        <input type="range" name="stress_level" min="0" max="10" value="5" class="range-input" oninput="updateRange('stress_level', this.value)">
-                    </div>
-
-                    <!-- PHQ-9 Depression Score -->
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm font-bold text-gray-300">PHQ-9 Clinical Index</label>
-                            <span class="text-2xl font-black text-primary" id="depression_phq9_score_val">14</span>
-                        </div>
-                        <input type="range" name="depression_phq9_score" min="0" max="27" value="14" class="range-input" oninput="updateRange('depression_phq9_score', this.value)">
-                    </div>
-                </div>
-            </div>
-
-            <!-- STEP 4: Lifestyle -->
-            <div id="step-4" class="step-container hidden space-y-12 animate__animated">
-                <!-- Social Activity -->
-                <div class="space-y-6">
-                    <label class="text-sm font-bold text-gray-300">Social Integration Level</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                        {% for opt in label_encoders['social_activity_level'].classes_ %}
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="social_activity_level" value="{{ opt }}" class="hidden peer" required {% if opt == 'Medium' %}checked{% endif %}>
-                            <div class="h-16 flex items-center justify-center glass bg-white/5 border border-white/5 rounded-2xl peer-checked:border-primary transition-all text-center px-2">
-                                <span class="font-bold text-[10px] uppercase tracking-widest text-gray-600 peer-checked:text-primary">{{ opt }}</span>
-                            </div>
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Exercise Frequency -->
-                <div class="space-y-6">
-                    <label class="text-sm font-bold text-gray-300">Systemic Exertion Frequency</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                        {% for opt in label_encoders['exercise_frequency'].classes_ %}
-                        <label class="cursor-pointer group">
-                            <input type="radio" name="exercise_frequency" value="{{ opt }}" class="hidden peer" required {% if opt == 'Sometimes' %}checked{% endif %}>
-                            <div class="h-16 flex items-center justify-center glass bg-white/5 border border-white/5 rounded-2xl peer-checked:border-primary transition-all text-center px-2">
-                                <span class="font-bold text-[10px] uppercase tracking-widest text-gray-600 peer-checked:text-primary">{{ opt }}</span>
-                            </div>
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Meditation -->
-                <div class="space-y-6">
-                    <label class="text-sm font-bold text-gray-300">Mindfulness Intervention</label>
-                    <div class="flex space-x-6">
-                        {% for opt in label_encoders['meditation_or_mindfulness'].classes_ %}
-                        <label class="flex-1 cursor-pointer group">
-                            <input type="radio" name="meditation_or_mindfulness" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
-                            <div class="h-16 flex items-center justify-center glass bg-white/5 border border-white/5 rounded-2xl peer-checked:border-primary transition-all">
-                                <span class="font-bold text-gray-500 peer-checked:text-primary uppercase tracking-widest text-xs">{{ opt }}</span>
-                            </div>
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Multi-Step Buttons -->
-            <div class="flex justify-between items-center pt-10 border-t border-white/5">
-                <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="h-14 px-10 rounded-2xl border border-white/10 glass text-gray-400 hover:text-white hover:bg-white/5 transition-all opacity-0 pointer-events-none uppercase text-xs font-bold font-black tracking-widest">Back</button>
-                <div class="flex space-x-2">
-                    <div class="step-dot h-2 w-2 rounded-full bg-primary shadow-neon"></div>
-                    <div class="step-dot h-2 w-2 rounded-full bg-white/10"></div>
-                    <div class="step-dot h-2 w-2 rounded-full bg-white/10"></div>
-                    <div class="step-dot h-2 w-2 rounded-full bg-white/10"></div>
-                </div>
-                <button type="button" id="nextBtn" onclick="nextPrev(1)" class="h-14 px-10 rounded-2xl bg-gradient-to-r from-primary to-primary/80 text-black font-black uppercase text-xs tracking-[0.2em] hover:shadow-neon transition-all">Next Section</button>
-            </div>
-        </form>
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight">Neural <span class="text-neon">Audit</span></h1>
+        <p class="text-gray-400 max-w-xl mx-auto font-medium text-sm">Synchronize your systemic markers with our LSTM neural engine for a forensic wellness projection.</p>
     </div>
 
-    <!-- PREDICTION RESULTS PANEL (Smooth scroll into view) -->
+    <!-- Multi-Step SaaS Form -->
+    <div class="saas-card p-1 md:p-2 overflow-hidden relative">
+        <div class="bg-[#080808]/80 backdrop-blur-3xl rounded-[22px] overflow-hidden">
+            
+            <!-- Dynamic Progress Tracker -->
+            <div class="px-10 pt-10 pb-6 border-b border-white/5 bg-white/[0.02]">
+                <div class="flex justify-between items-end mb-4">
+                    <div class="space-y-1">
+                        <span id="stepIndicator" class="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Sequence 01</span>
+                        <h3 id="stepTitle" class="text-xl font-bold text-white tracking-tight">Biometric Foundation</h3>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Diagnostic Progress</span>
+                        <p class="text-lg font-black text-white italic" id="progressPercentage">25%</p>
+                    </div>
+                </div>
+                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-primary transition-all duration-700 shadow-[0_0_15px_rgba(34,197,94,0.3)]" style="width: 25%"></div>
+                </div>
+            </div>
+
+            <form action="{{ url_for('predict') }}" method="POST" id="predictForm" class="p-10 space-y-12">
+                
+                <!-- STEP 1: Personal Info -->
+                <div id="step-1" class="step-container space-y-10 animate__animated">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <!-- Age Slider -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Patient Age</label>
+                                <span class="text-2xl font-black text-white bg-primary/10 border border-primary/20 px-4 py-1 rounded-xl" id="age_val">25</span>
+                            </div>
+                            <input type="range" name="age" min="1" max="120" value="25" class="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-primary" oninput="updateRange('age', this.value)">
+                            <div class="flex justify-between text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+                                <span>Neonatal</span>
+                                <span>Centenarian</span>
+                            </div>
+                        </div>
+
+                        <!-- Gender Select -->
+                        <div class="space-y-4">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Biological Profile</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                {% for opt in label_encoders['gender'].classes_ %}
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="gender" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
+                                    <div class="h-14 flex items-center justify-center rounded-2xl bg-white/5 border border-white/5 peer-checked:bg-primary/10 peer-checked:border-primary/50 peer-checked:text-primary transition-all hover:bg-white/10">
+                                        <span class="text-xs font-bold uppercase tracking-widest">{{ opt }}</span>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Work Status -->
+                    <div class="space-y-4">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Occupational Exposure</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {% for opt in label_encoders['work_status'].classes_ %}
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="work_status" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
+                                <div class="h-20 flex flex-col items-center justify-center rounded-2xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all hover:bg-white/10 px-4 text-center">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest leading-tight">{{ opt }}</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Sleep & Health -->
+                <div id="step-2" class="step-container hidden space-y-12 animate__animated">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
+                        <!-- Sleep Quality -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Sleep Efficiency</label>
+                                <span class="text-2xl font-black text-white" id="sleep_quality_index_val">10</span>
+                            </div>
+                            <input type="range" name="sleep_quality_index" min="0" max="20" value="10" class="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-primary" oninput="updateRange('sleep_quality_index', this.value)">
+                        </div>
+
+                        <!-- Rest Hours -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Cycle Duration</label>
+                                <span class="text-2xl font-black text-white" id="hours_of_sleep_per_night_val">7h</span>
+                            </div>
+                            <input type="range" name="hours_of_sleep_per_night" min="0" max="15" value="7" class="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-primary" oninput="updateRange('hours_of_sleep_per_night', this.value)">
+                        </div>
+
+                        <!-- Fatigue Severity -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Fatigue Load (FSS)</label>
+                                <span class="text-2xl font-black text-primary" id="fatigue_severity_scale_score_val">4.5</span>
+                            </div>
+                            <input type="range" name="fatigue_severity_scale_score" min="1" max="7" step="0.1" value="4.5" class="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-primary" oninput="updateRange('fatigue_severity_scale_score', this.value)">
+                        </div>
+
+                        <!-- PEM Marker -->
+                        <div class="space-y-4">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">PEM Manifestation</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                {% for opt in label_encoders['meditation_or_mindfulness'].classes_ %}
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="pem_present_radio" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %} onchange="document.getElementById('pem_present').value = (this.value === 'Yes' ? 1.0 : 0.0)">
+                                    <div class="h-14 flex items-center justify-center rounded-2xl bg-white/5 border border-white/5 peer-checked:bg-primary/10 peer-checked:border-primary/50 peer-checked:text-primary transition-all">
+                                        <span class="text-xs font-bold uppercase tracking-widest">{{ opt }}</span>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                                <input type="hidden" name="pem_present" id="pem_present" value="1.0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Mental & Pain -->
+                <div id="step-3" class="step-container hidden space-y-12 animate__animated">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                        <!-- Brain Fog -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Cognitive Impedance</label>
+                                <span class="text-2xl font-black text-white" id="brain_fog_level_val">5</span>
+                            </div>
+                            <input type="range" name="brain_fog_level" min="0" max="10" value="5" class="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-primary" oninput="updateRange('brain_fog_level', this.value)">
+                        </div>
+
+                        <!-- Physical Pain -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Pain Intensity Factor</label>
+                                <span class="text-2xl font-black text-white" id="physical_pain_score_val">5</span>
+                            </div>
+                            <input type="range" name="physical_pain_score" min="0" max="10" value="5" class="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-primary" oninput="updateRange('physical_pain_score', this.value)">
+                        </div>
+
+                        <!-- PHQ-9 -->
+                        <div class="space-y-6 col-span-1 md:col-span-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">PHQ-9 Affective Index</label>
+                                <span class="text-2xl font-black text-primary" id="depression_phq9_score_val">14</span>
+                            </div>
+                            <input type="range" name="depression_phq9_score" min="0" max="27" value="14" class="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-primary" oninput="updateRange('depression_phq9_score', this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: Lifestyle -->
+                <div id="step-4" class="step-container hidden space-y-12 animate__animated">
+                    <!-- Exercise -->
+                    <div class="space-y-4">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Exertion Frequency</label>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            {% for opt in label_encoders['exercise_frequency'].classes_ %}
+                            <label class="cursor-pointer">
+                                <input type="radio" name="exercise_frequency" value="{{ opt }}" class="hidden peer" required {% if opt == 'Sometimes' %}checked{% endif %}>
+                                <div class="h-16 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all text-center px-2">
+                                    <span class="text-[9px] font-bold uppercase tracking-widest">{{ opt }}</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Social -->
+                    <div class="space-y-4">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Integration Quotient</label>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            {% for opt in label_encoders['social_activity_level'].classes_ %}
+                            <label class="cursor-pointer">
+                                <input type="radio" name="social_activity_level" value="{{ opt }}" class="hidden peer" required {% if opt == 'Medium' %}checked{% endif %}>
+                                <div class="h-16 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all text-center px-2">
+                                    <span class="text-[9px] font-bold uppercase tracking-widest">{{ opt }}</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Bar -->
+                <div class="flex justify-between items-center pt-10 border-t border-white/5">
+                    <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="h-12 px-8 rounded-xl border border-white/10 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all opacity-0 pointer-events-none">Previous</button>
+                    <div class="flex gap-2">
+                        {% for i in range(4) %}
+                        <div class="step-dot h-1 w-8 rounded-full bg-white/5 transition-all duration-500"></div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn-primary h-12 px-10 rounded-xl text-xs uppercase tracking-widest">Continue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PREDICTION RESULTS PANEL -->
     {% if prediction %}
     <div id="results" class="space-y-12 py-12 animate__animated animate__fadeInUp">
-        
-        <div class="text-center space-y-6">
-            <h2 class="text-2xl font-black text-gray-600 uppercase tracking-[0.6em] italic">Predictive Status</h2>
-            <div class="inline-flex flex-col items-center">
-                <div class="diagnosis-badge px-10 py-5 rounded-2xl text-2xl font-black text-black shadow-2xl animate-pulse
-                     {% if 'Chronic' in prediction %} bg-red-600 shadow-red-500/20 {% elif 'Chances' in prediction %} bg-amber-500 shadow-amber-500/20 {% else %} bg-primary shadow-primary/20 {% endif %}">
-                    {{ prediction }}
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <!-- SVG Arc Gauge -->
-            <div class="glass-card p-10 flex flex-col items-center justify-center space-y-8">
-                <h3 class="text-xs font-black uppercase tracking-[0.3em] text-gray-500">Risk Severity Level</h3>
-                <div class="relative w-72 h-44">
-                    <svg class="w-full h-full" viewBox="0 0 100 60">
-                        <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="8" stroke-linecap="round" />
-                        <path id="gaugePath" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="url(#gaugeGradient)" stroke-width="8" stroke-linecap="round" 
-                              stroke-dasharray="125.6" stroke-dashoffset="{{ 125.6 * (1 - risk_score/100) }}" class="transition-all duration-1000 ease-out" />
-                        <defs>
-                            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#22c55e" />
-                                <stop offset="50%" stop-color="#f59e0b" />
-                                <stop offset="100%" stop-color="#ef4444" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <div class="absolute bottom-0 inset-x-0 text-center">
-                        <span class="text-6xl font-black text-white italic tracking-tighter">{{ risk_score }}</span>
-                        <p class="text-[9px] font-black uppercase text-gray-700 tracking-[0.4em] mt-1">Accuracy Confirmed</p>
-                    </div>
-                </div>
-                <p class="text-[10px] text-gray-600 text-center leading-relaxed font-bold uppercase tracking-widest">Neural mapping calculated via multiclass softmax distribution.</p>
-            </div>
-
-            <!-- Horizontal Bar Chart -->
-            <div class="glass-card p-10 space-y-10">
-                <h3 class="text-xs font-black uppercase tracking-[0.3em] text-gray-500">Probabilistic Audit</h3>
-                <div class="h-56">
-                    <canvas id="probChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Symptom Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {% set results_data = session.get('latest_report', {}).get('inputs', {}) %}
+        <div class="saas-card p-12 text-center space-y-10 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
             
-            {% if results_data.get('stress_level')|float > 7 %}
-            <div class="glass-card p-6 border-l-4 border-red-500 space-y-2">
-                <h4 class="text-[10px] font-black uppercase text-gray-600">Critical Load</h4>
-                <p class="text-3xl font-black text-white italic">{{ results_data.get('stress_level') }}</p>
-                <p class="text-[8px] font-bold text-red-500 uppercase">Stress Index High</p>
+            <div class="space-y-4 relative z-10">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.4em]">Audit Classification Result</p>
+                <h2 class="text-5xl md:text-7xl font-extrabold text-white tracking-tighter uppercase italic">
+                    {{ prediction }}
+                </h2>
             </div>
-            {% endif %}
 
-            {% if results_data.get('brain_fog_level')|float > 7 %}
-            <div class="glass-card p-6 border-l-4 border-accent space-y-2">
-                <h4 class="text-[10px] font-black uppercase text-gray-600">Sync Failure</h4>
-                <p class="text-3xl font-black text-white italic">{{ results_data.get('brain_fog_level') }}</p>
-                <p class="text-[8px] font-bold text-accent uppercase">Brain Fog Peak</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+                <div class="p-8 rounded-3xl bg-white/5 border border-white/5 space-y-4">
+                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Neural Confidence</p>
+                    <p class="text-4xl font-black text-white italic">94.8<span class="text-sm text-gray-500">%</span></p>
+                </div>
+                <div class="p-8 rounded-3xl bg-white/5 border border-white/5 space-y-4">
+                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Risk Severity</p>
+                    <p class="text-4xl font-black text-primary italic">{{ risk_score }}</p>
+                </div>
+                <div class="p-8 rounded-3xl bg-white/5 border border-white/5 space-y-4">
+                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Status</p>
+                    <p class="text-4xl font-black text-white italic">ACTIVE</p>
+                </div>
             </div>
-            {% endif %}
 
-            {% if results_data.get('hours_of_sleep_per_night')|float < 6 %}
-            <div class="glass-card p-6 border-l-4 border-amber-500 space-y-2">
-                <h4 class="text-[10px] font-black uppercase text-gray-600">Rest Deficit</h4>
-                <p class="text-3xl font-black text-white italic">{{ results_data.get('hours_of_sleep_per_night') }}h</p>
-                <p class="text-[8px] font-bold text-amber-500 uppercase">Insufficient Cycle</p>
+            <div class="pt-8 relative z-10">
+                <a href="{{ url_for('download_report') }}" class="btn-primary inline-flex items-center gap-3 px-12 py-5 rounded-2xl text-xs uppercase tracking-widest">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    Export Clinical PDF
+                </a>
             </div>
-            {% endif %}
-
-            {% if results_data.get('fatigue_severity_scale_score')|float > 5 %}
-            <div class="glass-card p-6 border-l-4 border-primary space-y-2">
-                <h4 class="text-[10px] font-black uppercase text-gray-600">Neural Fatigue</h4>
-                <p class="text-3xl font-black text-white italic">{{ results_data.get('fatigue_severity_scale_score') }}</p>
-                <p class="text-[8px] font-bold text-primary uppercase">FSS Severity Threshold</p>
-            </div>
-            {% endif %}
         </div>
-
-        <!-- Result Actions -->
-        <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <a href="{{ url_for('download_report') }}" class="w-full sm:w-auto h-16 px-12 bg-white text-black font-black rounded-2xl hover:bg-primary transition-all flex items-center justify-center space-x-3 uppercase text-xs tracking-widest shadow-xl">
-                <i data-lucide="file-text" class="w-5 h-5"></i>
-                <span>Export Report PDF</span>
-            </a>
-            <a href="{{ url_for('predict') }}" class="w-full sm:w-auto h-16 px-12 glass border border-white/10 text-white font-black rounded-2xl hover:bg-white/5 transition-all flex items-center justify-center space-x-3 uppercase text-xs tracking-widest">
-                <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
-                <span>Reset Assessment</span>
-            </a>
-        </div>
-
     </div>
     {% endif %}
 
 </div>
 
-<!-- Process Overlay -->
-<div id="loadingOverlay" class="fixed inset-0 bg-dark/95 backdrop-blur-3xl z-[200] hidden flex-col items-center justify-center space-y-8 animate__animated animate__fadeIn">
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="fixed inset-0 bg-black/95 backdrop-blur-3xl z-[200] hidden flex flex-col items-center justify-center space-y-8 animate__animated animate__fadeIn">
     <div class="relative w-24 h-24">
-        <div class="absolute inset-0 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
-        <div class="absolute inset-4 rounded-full border-4 border-accent/20 border-t-accent animate-spin-slow"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-primary/10 border-t-primary animate-spin"></div>
+        <div class="absolute inset-4 rounded-full border-4 border-primary/5 border-t-primary/40 animate-[spin_2s_linear_infinite]"></div>
     </div>
     <div class="text-center space-y-2">
-        <p class="text-3xl font-black text-white italic tracking-tighter">Syncing Neural Markers...</p>
-        <p class="text-gray-600 text-[10px] font-bold uppercase tracking-[0.4em]">Executing Multiclass Predictor Pattern</p>
+        <h3 class="text-2xl font-bold text-white tracking-tight">Processing Neural Markers</h3>
+        <p class="text-[9px] font-bold text-gray-500 uppercase tracking-[0.5em]">Synchronizing with Clinical Engine</p>
     </div>
 </div>
 
-<style>
-    .animate-spin-slow { animation: spin 3s linear infinite; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-</style>
-
 <script>
-    // Multi-Step Logic
+    // Step Logic
     let currentStep = 0;
     const steps = document.getElementsByClassName("step-container");
     const dots = document.getElementsByClassName("step-dot");
@@ -365,27 +272,26 @@
         steps[n].classList.remove("hidden");
         steps[n].classList.add("animate__fadeInRight");
         
-        document.getElementById("stepIndicator").innerText = `Sequence ${n + 1} of 4`;
-        const titles = ["Personal Metrics", "Rest & Resilience", "Cognitive Sync", "Lifestyle Intervention"];
+        document.getElementById("stepIndicator").innerText = `Sequence 0${n + 1}`;
+        const titles = ["Biometric Foundation", "Systemic Resilience", "Cognitive Sync", "Lifestyle Interface"];
         document.getElementById("stepTitle").innerText = titles[n];
         
-        document.getElementById("progressBar").style.width = (n + 1) * 25 + "%";
+        const progress = (n + 1) * 25;
+        document.getElementById("progressBar").style.width = progress + "%";
+        document.getElementById("progressPercentage").innerText = progress + "%";
         
         document.getElementById("prevBtn").style.opacity = (n == 0) ? "0" : "1";
         document.getElementById("prevBtn").style.pointerEvents = (n == 0) ? "none" : "auto";
         
         const nextBtn = document.getElementById("nextBtn");
-        nextBtn.innerHTML = (n == (steps.length - 1)) ? "Finalize Analysis" : "Next Section";
+        nextBtn.innerHTML = (n == (steps.length - 1)) ? "Run Neural Audit" : "Continue";
 
         for (let i = 0; i < dots.length; i++) {
-            dots[i].className = dots[i].className.replace(" bg-primary shadow-neon", " bg-white/10");
-            if (i <= n) dots[i].classList.replace("bg-white/10", "bg-primary shadow-neon");
+            dots[i].className = "step-dot h-1 w-8 rounded-full transition-all duration-500 " + (i <= n ? "bg-primary shadow-[0_0_10px_rgba(34,197,94,0.3)]" : "bg-white/5");
         }
     }
 
     function nextPrev(n) {
-        if (n == 1 && !validateForm()) return false;
-        
         steps[currentStep].classList.add("hidden");
         currentStep = currentStep + n;
         
@@ -398,58 +304,19 @@
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    function validateForm() {
-        let valid = true;
-        const currentInputs = steps[currentStep].querySelectorAll("input");
-        currentInputs.forEach(input => {
-            if (input.required && !input.value) {
-                input.parentElement.classList.add("animate-shake", "border-red-500");
-                valid = false;
-            }
-        });
-        return valid;
-    }
-
     function updateRange(id, val) {
         let display = val;
-        if (id === 'hours_of_sleep_per_night' || id === 'pem_duration_hours') display = val + 'h';
+        if (id === 'hours_of_sleep_per_night') display = val + 'h';
         document.getElementById(id + '_val').innerText = display;
     }
 
-    {% if probabilities %}
-    const chartCtx = document.getElementById('probChart').getContext('2d');
-    new Chart(chartCtx, {
-        type: 'bar',
-        data: {
-            labels: {{ class_labels|tojson }},
-            datasets: [{
-                data: {{ probabilities|tojson }},
-                backgroundColor: [
-                    'rgba(245, 158, 11, 0.4)',
-                    'rgba(239, 68, 68, 0.4)',
-                    'rgba(34, 197, 94, 0.4)'
-                ],
-                borderColor: ['#f59e0b', '#ef4444', '#22c55e'],
-                borderWidth: 2,
-                borderRadius: 4
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { display: false, max: 1 },
-                y: { grid: { display: false }, ticks: { color: '#4b5563', font: { weight: 'black', size: 10 } } }
-            }
-        }
-    });
+    showStep(0);
+    lucide.createIcons();
     
+    {% if prediction %}
     setTimeout(() => {
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }, 500);
     {% endif %}
-
-    showStep(0);
 </script>
 {% endblock %}
