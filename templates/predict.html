@@ -118,14 +118,18 @@
                         <div class="space-y-4">
                             <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">PEM Manifestation</label>
                             <div class="grid grid-cols-2 gap-4">
-                                {% for opt in label_encoders['meditation_or_mindfulness'].classes_ %}
                                 <label class="cursor-pointer group">
-                                    <input type="radio" name="pem_present_radio" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %} onchange="document.getElementById('pem_present').value = (this.value === 'Yes' ? 1.0 : 0.0)">
+                                    <input type="radio" name="pem_present_radio" value="Yes" class="hidden peer" checked onchange="document.getElementById('pem_present').value = 1.0">
                                     <div class="h-14 flex items-center justify-center rounded-2xl bg-white/5 border border-white/5 peer-checked:bg-primary/10 peer-checked:border-primary/50 peer-checked:text-primary transition-all">
-                                        <span class="text-xs font-bold uppercase tracking-widest">{{ opt }}</span>
+                                        <span class="text-xs font-bold uppercase tracking-widest">Yes</span>
                                     </div>
                                 </label>
-                                {% endfor %}
+                                <label class="cursor-pointer group">
+                                    <input type="radio" name="pem_present_radio" value="No" class="hidden peer" onchange="document.getElementById('pem_present').value = 0.0">
+                                    <div class="h-14 flex items-center justify-center rounded-2xl bg-white/5 border border-white/5 peer-checked:bg-primary/10 peer-checked:border-primary/50 peer-checked:text-primary transition-all">
+                                        <span class="text-xs font-bold uppercase tracking-widest">No</span>
+                                    </div>
+                                </label>
                                 <input type="hidden" name="pem_present" id="pem_present" value="1.0">
                             </div>
                         </div>
@@ -188,6 +192,20 @@
                             {% for opt in label_encoders['social_activity_level'].classes_ %}
                             <label class="cursor-pointer">
                                 <input type="radio" name="social_activity_level" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
+                                <div class="h-16 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all text-center px-2">
+                                    <span class="text-[9px] font-bold uppercase tracking-widest">{{ opt }}</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Mindfulness Practice -->
+                    <div class="space-y-4">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Mindfulness Practice</label>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            {% for opt in label_encoders['meditation_or_mindfulness'].classes_ %}
+                            <label class="cursor-pointer">
+                                <input type="radio" name="meditation_or_mindfulness" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
                                 <div class="h-16 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all text-center px-2">
                                     <span class="text-[9px] font-bold uppercase tracking-widest">{{ opt }}</span>
                                 </div>
