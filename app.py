@@ -30,10 +30,39 @@ if not os.environ.get('VERCEL') and not os.environ.get('RENDER'):
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
-from flask_wtf.csrf import CSRFProtect
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from flask_talisman import Talisman
+
+# Security Extensions (Optional - graceful fallback if packages not installed on host)
+try:
+    from flask_wtf.csrf import CSRFProtect
+    CSRF_AVAILABLE = True
+except ImportError:
+    print("INFO: flask-wtf not installed. CSRF protection disabled.")
+    CSRF_AVAILABLE = False
+    class CSRFProtect:
+        def __init__(self, app=None): pass
+
+try:
+    from flask_limiter import Limiter
+    from flask_limiter.util import get_remote_address
+    LIMITER_AVAILABLE = True
+except ImportError:
+    print("INFO: flask-limiter not installed. Rate limiting disabled.")
+    LIMITER_AVAILABLE = False
+    class Limiter:
+        def __init__(self, *args, **kwargs): pass
+        def limit(self, *args, **kwargs):
+            def decorator(f): return f
+            return decorator
+    def get_remote_address(): return '127.0.0.1'
+
+try:
+    from flask_talisman import Talisman
+    TALISMAN_AVAILABLE = True
+except ImportError:
+    print("INFO: flask-talisman not installed. Security headers disabled.")
+    TALISMAN_AVAILABLE = False
+    class Talisman:
+        def __init__(self, *args, **kwargs): pass
 import psycopg2
 import psycopg2.extras
 from psycopg2 import IntegrityError
@@ -90,8 +119,7 @@ if os.environ.get('VERCEL') or os.environ.get('PROXY_FIX'):
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_NAME'] = 'pp_health_session'
 csrf = CSRFProtect(app)
-limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"], storage_uri="memory://")
-# Talisman for security headers - disable force_https since Vercel handles SSL termination
+limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"], storage_uri="memory://") if LIMITER_AVAILABLE else Limiter()
 Talisman(app, content_security_policy=None, force_https=False)
 
 # OAuth Configuration
