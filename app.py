@@ -37,8 +37,10 @@ import datetime
 import io
 import json
 import csv
+import urllib.parse
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
+from export_utils import generate_clinical_pdf, generate_historical_csv
 # Authentication related (Safe import wrapper)
 try:
     from authlib.integrations.flask_client import OAuth
@@ -441,10 +443,6 @@ def predict():
                 # -------------------------
                 # Log Prediction
                 # -------------------------
-
-                # -------------------------
-                # Log Prediction
-                # -------------------------
                 # Calculate risk score: (p_normal * 0 + p_chances * 50 + p_cfs * 100)
                 # Labels: ['Chances of CFD', 'Chronic Fatigue Syndrome', 'Normal']
                 # Indices: 0: Chances, 1: CFS, 2: Normal
@@ -696,46 +694,18 @@ def simulate():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 400
 
-@app.route('/export_csv')
-def export_csv():
-    # Security: Protected route check
-    if 'username' not in session:
-        flash("Authorization required to export data.", "warning")
-        return redirect(url_for('login'))
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, prediction, inputs_json FROM predictions WHERE user_id=%s", (session['user_id'],))
-    rows = cursor.fetchall()
-    conn.close()
-
-    si = io.StringIO()
-    cw = csv.writer(si)
-    cw.writerow(['Timestamp', 'Prediction'] + columns)
-    
-    for row in rows:
-        inputs = json.loads(row[2]) if row[2] else {}
-        input_row = [inputs.get(col, '') for col in columns]
-        cw.writerow([row[0], row[1]] + input_row)
-
-    output = make_response(si.getvalue())
-    output.headers["Content-Disposition"] = f"attachment; filename=CFS_Health_History_{datetime.date.today()}.csv"
-    output.headers["Content-type"] = "text/csv"
-    return output
-
 @app.route('/download_report')
 def download_report():
-    # Security: Protected route check
-    if 'latest_report' not in session:
-        flash("No report data found. Please perform a prediction first.", "warning")
-        return redirect(url_for('predict'))
+    if 'username' not in session or 'latest_report' not in session:
+        flash("No recent neural audit found to export.", "error")
+        return redirect(url_for('dashboard'))
 
     data = session['latest_report']
     
-    # Calculate Forecast for the report
+    # Calculate forecast string for PDF
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, prediction FROM predictions WHERE user_id=%s ORDER BY timestamp ASC", (session['user_id'],))
+    cursor.execute("SELECT timestamp, prediction FROM predictions WHERE user_id = %s ORDER BY timestamp ASC", (session['user_id'],))
     user_predictions = cursor.fetchall()
     conn.close()
     
@@ -752,113 +722,38 @@ def download_report():
             trend = "improving" if diff > 0 else "declining"
             forecast_text = f"Neural analysis projects an {trend} trend. Projected 7-day efficiency index: {int(last_forecast)}/100."
 
-    class PDFReport(FPDF):
-        def header(self):
-            self.set_fill_color(0, 0, 0) # Black
-            self.rect(0, 0, 210, 45, 'F')
-            self.set_font('Arial', 'B', 22)
-            self.set_text_color(255, 255, 255)
-            self.cell(0, 25, 'PP HEALTH TRACKER', ln=True, align='C')
-            self.set_font('Arial', 'B', 10)
-            self.set_text_color(34, 197, 94) # Primary Green
-            self.cell(0, 5, 'NEURAL NETWORK DIAGNOSTIC AUDIT', ln=True, align='C')
-            self.ln(10)
+    return generate_clinical_pdf(data, forecast_text, session['username'])
 
-        def footer(self):
-            self.set_y(-15)
-            self.set_font('Arial', 'I', 8)
-            self.set_text_color(100, 100, 100)
-            self.cell(0, 10, f'Page {self.page_no()} | Systemic Health Audit | PP Health Tracker', align='C')
-
-    pdf = PDFReport()
-    pdf.add_page()
-    pdf.ln(15)
-
-    # Info Section
-    pdf.set_font("Arial", 'B', 12)
-    pdf.set_text_color(0, 0, 0)
-    pdf.cell(100, 10, f"Patient: {session['username']}")
-    pdf.cell(90, 10, f"Date: {data['timestamp']}", align='R', ln=1)
-    pdf.line(10, 62, 200, 62)
-    pdf.ln(10)
-
-    # Main Result
-    pdf.set_fill_color(245, 255, 245) # Light Green background
-    pdf.rect(10, 75, 190, 35, 'F')
-    pdf.set_y(80)
-    pdf.set_font("Arial", 'B', 16)
-    pdf.set_text_color(0, 0, 0)
-    pdf.cell(190, 10, f"DIAGNOSIS: {data['prediction']}", align='C', ln=1)
+@app.route('/export_data')
+def export_data():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, timestamp, prediction, inputs_json FROM predictions WHERE user_id = %s ORDER BY timestamp DESC", (session['user_id'],))
+    predictions = cursor.fetchall()
+    conn.close()
     
-    pdf.set_font("Arial", 'B', 12)
-    pdf.set_text_color(34, 197, 94)
-    pdf.cell(190, 10, f"CLINICAL RISK SCORE: {data['risk_score']}/100", align='C', ln=1)
-    pdf.ln(15)
+    return generate_historical_csv(predictions)
 
-    # Probabilities
-    pdf.set_text_color(0, 0, 0)
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(190, 10, "PROBABILISTIC DISTRIBUTION:", ln=1)
-    pdf.set_font("Arial", '', 11)
-    for label, prob in zip(data['class_labels'], data['probabilities']):
-        pdf.cell(190, 8, f"  - {label}: {prob:.2%}", ln=1)
-    pdf.ln(10)
-
-    # Input Audit
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(190, 10, "Input Data Audit:", ln=1)
-    pdf.set_font("Arial", '', 9)
-    sorted_inputs = sorted(data['inputs'].items())
+@app.route('/delete_account', methods=['POST'])
+def delete_account():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Delete predictions first due to foreign key
+    cursor.execute("DELETE FROM predictions WHERE user_id = %s", (session['user_id'],))
+    # Delete user
+    cursor.execute("DELETE FROM users WHERE id = %s", (session['user_id'],))
+    conn.commit()
+    conn.close()
     
-    # Simple table for inputs
-    pdf.set_fill_color(245, 245, 245)
-    for i, (key, val) in enumerate(sorted_inputs):
-        display_key = key.replace('_', ' ').title()
-        fill = (i % 2 == 0)
-        pdf.cell(95, 7, f"  {display_key}:", border=1, fill=fill)
-        pdf.cell(95, 7, f"  {val}", border=1, ln=1, fill=fill)
-
-    # Tips Section
-    pdf.ln(10)
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(190, 10, "Clinical Recommendations:", ln=1)
-    pdf.set_font("Arial", '', 10)
-    if 'Chronic' in data['prediction']:
-        tips = ["- Immediate consultation with a fatigue specialist is recommended.",
-                "- Implement 'Pacing' strategies to avoid Post-Exertional Malaise (PEM).",
-                "- Focus on restorative rest and nutrient-dense anti-inflammatory diet."]
-    elif 'Chances' in data['prediction']:
-        tips = ["- Monitor your symptoms daily and reduce high-impact stress.",
-                "- Improve sleep hygiene (7-9 hours of dark-room rest).",
-                "- Introduce gentle light movement but avoid over-exertion."]
-    else:
-        tips = ["- Maintain a balanced lifestyle with regular hydration.",
-                "- Regular physical check-ups to monitor baseline metrics.",
-                "- Practice mindfulness to manage daily cognitive loads."]
-    
-    for tip in tips:
-        pdf.multi_cell(190, 8, tip)
-
-    # Forecasting Section (Predictive Outlook)
-    pdf.ln(10)
-    pdf.set_fill_color(34, 197, 94)
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(190, 10, " NEURO-PREDICTIVE OUTLOOK (7-DAY PROJECTION)", ln=1, fill=True)
-    pdf.set_text_color(0, 0, 0)
-    pdf.set_font("Arial", 'I', 10)
-    pdf.ln(5)
-    pdf.multi_cell(190, 8, forecast_text)
-    pdf.ln(10)
-    pdf.set_font("Arial", '', 8)
-    pdf.set_text_color(150, 150, 150)
-    pdf.multi_cell(190, 5, "NOTE: Projections are based on linear regression of historical markers and intended for clinical guidance only. Statistical confidence increases with audit frequency.")
-
-    output = pdf.output(dest='S')
-    response = make_response(output)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f'attachment; filename=Predictive_Health_Report_{datetime.datetime.now().strftime("%Y%m%d")}.pdf'
-    return response
+    session.clear()
+    flash("Your account and all associated neural data have been permanently deleted.", "success")
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     # Use environment variables for port and host (required for production)
