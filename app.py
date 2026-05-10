@@ -201,7 +201,10 @@ def init_db():
 
 # Only initialize DB if DATABASE_URL is provided
 if DATABASE_URL:
-    init_db()
+    try:
+        init_db()
+    except Exception as e:
+        print(f"CRITICAL DATABASE ERROR: {e}")
 else:
     print("WARNING: Skipping init_db because DATABASE_URL is missing.")
 
@@ -210,10 +213,15 @@ else:
 # -------------------------
 if ML_SUPPORTED:
     try:
-        model = load_model("lstm_multiclass_model.h5", compile=False)
-        scaler = joblib.load("scaler.pkl")
-        label_encoders = joblib.load("label_encoders.pkl")
-        target_encoder = joblib.load("target_encoder.pkl")
+        model_path = os.path.join(basedir, "lstm_multiclass_model.h5")
+        scaler_path = os.path.join(basedir, "scaler.pkl")
+        encoders_path = os.path.join(basedir, "label_encoders.pkl")
+        target_path = os.path.join(basedir, "target_encoder.pkl")
+        
+        model = load_model(model_path, compile=False)
+        scaler = joblib.load(scaler_path)
+        label_encoders = joblib.load(encoders_path)
+        target_encoder = joblib.load(target_path)
     except Exception as e:
         print(f"ML ERROR: {str(e)}")
         ML_SUPPORTED = False
