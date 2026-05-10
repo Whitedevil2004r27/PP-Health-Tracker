@@ -1,276 +1,368 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Cinematic Assets & Scripts -->
+<!-- Cinematic Dependencies -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
-
-<div id="cinematic-container" class="relative bg-black text-white selection:bg-primary selection:text-black overflow-hidden">
-    
-    <!-- Immersive Background: Neural Grid -->
-    <canvas id="neuralCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none opacity-40 z-0"></canvas>
-
-    <!-- Preloader -->
-    <div id="preloader" class="fixed inset-0 z-[200] bg-black flex items-center justify-center">
-        <div class="relative">
-            <div class="w-16 h-16 border-2 border-primary/20 rounded-full animate-spin"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-[8px] font-black tracking-widest text-primary animate-pulse">INIT</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scroll Progress -->
-    <div class="fixed top-0 left-0 w-full h-1 bg-white/5 z-[150]">
-        <div id="scrollProgress" class="h-full bg-primary w-0"></div>
-    </div>
-
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden px-6 pt-20">
-        <div class="absolute inset-0 z-0">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vmax] h-[150vmax] bg-gradient-to-b from-primary/10 via-transparent to-transparent rounded-full blur-[120px] opacity-20"></div>
-        </div>
-
-        <div class="relative z-10 text-center max-w-6xl mx-auto">
-            <div class="hero-tag inline-flex items-center space-x-3 px-5 py-2 rounded-full glass border-primary/20 mb-8 opacity-0">
-                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
-                <span class="text-[9px] font-black tracking-[0.4em] uppercase text-primary">Neural Core v3.0</span>
-            </div>
-            
-            <h1 class="hero-title font-extrabold tracking-tighter mb-8 opacity-0 leading-[0.85]">
-                PREDICTIVE<br/>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary italic">BIOLOGY</span>
-            </h1>
-
-            <p class="hero-sub text-sm md:text-lg text-gray-400 max-w-xl mx-auto mb-12 leading-relaxed opacity-0">
-                The global standard in clinical neural intelligence. Forecast wellness trajectories with forensic precision through multi-stage LSTM modeling.
-            </p>
-
-            <div class="hero-cta flex flex-col sm:flex-row items-center justify-center gap-6 opacity-0">
-                <a href="{{ url_for('register') }}" class="btn-primary w-full sm:w-auto px-10 h-14 rounded-full shadow-neon group overflow-hidden relative">
-                    <span class="relative z-10">Initialize Portal</span>
-                    <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-                </a>
-                <a href="{{ url_for('login') }}" class="w-full sm:w-auto px-10 h-14 flex items-center justify-center border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
-                    Access Neural ID
-                </a>
-            </div>
-        </div>
-
-        <!-- Scroll Indicator -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-4">
-            <div class="w-px h-10 bg-gradient-to-b from-primary/50 to-transparent"></div>
-        </div>
-    </section>
-
-    <!-- The Process Section: Responsive Stack -->
-    <section id="process-section" class="relative py-24 md:h-[300vh] bg-dark-card/30">
-        <!-- Vertical Stack for Mobile, Horizontal for Desktop -->
-        <div class="md:sticky md:top-0 md:h-screen flex items-center overflow-hidden">
-            <div id="process-track" class="flex flex-col md:flex-row items-center space-y-20 md:space-y-0 md:space-x-32 px-6 md:px-[15vw] w-full">
-                <!-- Slide 1 -->
-                <div class="process-slide flex-shrink-0 w-full md:w-[35vw] space-y-6">
-                    <span class="text-4xl md:text-6xl font-black text-primary/20 italic">01</span>
-                    <h3 class="text-2xl md:text-5xl font-extrabold text-white italic uppercase tracking-tighter">DATA INGESTION</h3>
-                    <p class="text-gray-500 text-xs md:text-base font-medium leading-relaxed uppercase tracking-tight">
-                        Real-time synchronization of 24+ systemic markers. From caloric variance to biochemical stability, our ingestion engine normalizes high-fidelity patient data.
-                    </p>
-                    <div class="w-12 md:w-16 h-1 bg-primary/30"></div>
-                </div>
-
-                <!-- Slide 2 -->
-                <div class="process-slide flex-shrink-0 w-full md:w-[35vw] space-y-6">
-                    <span class="text-4xl md:text-6xl font-black text-primary/20 italic">02</span>
-                    <h3 class="text-2xl md:text-5xl font-extrabold text-white italic uppercase tracking-tighter">NEURAL ANALYSIS</h3>
-                    <p class="text-gray-500 text-xs md:text-base font-medium leading-relaxed uppercase tracking-tight">
-                        Multi-stage LSTM layers process complex trajectories. Detecting subtle anomalies before clinical symptoms manifest through forensic deep-learning.
-                    </p>
-                    <div class="w-12 md:w-16 h-1 bg-primary/30"></div>
-                </div>
-
-                <!-- Slide 3 -->
-                <div class="process-slide flex-shrink-0 w-full md:w-[35vw] space-y-6">
-                    <span class="text-4xl md:text-6xl font-black text-primary/20 italic">03</span>
-                    <h3 class="text-2xl md:text-5xl font-extrabold text-white italic uppercase tracking-tighter">RISK MITIGATION</h3>
-                    <p class="text-gray-500 text-xs md:text-base font-medium leading-relaxed uppercase tracking-tight">
-                        Actionable intelligence for proactive care. Generate clinically-formatted dossiers and intervention strategies optimized for metabolic longevity.
-                    </p>
-                    <div class="w-12 md:w-16 h-1 bg-primary/30"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Neural Architecture -->
-    <section class="relative py-24 bg-black overflow-hidden border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div class="space-y-6 reveal-text">
-                <div class="inline-flex items-center space-x-2 text-primary font-black uppercase text-[9px] tracking-[0.4em]">
-                    <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                    <span>Deep Learning Heart</span>
-                </div>
-                <h2 class="text-4xl md:text-6xl font-extrabold text-white tracking-tighter leading-[0.9]">TEMPORAL <br/><span class="text-neon">INTELLIGENCE.</span></h2>
-                <p class="text-gray-500 text-sm md:text-base leading-relaxed font-medium">
-                    Our multi-stage LSTM architecture understands the <span class="text-white italic">temporal context</span> of your health. It analyzes the entire history of systemic markers to find patterns invisible to the human eye.
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
-                    <div class="space-y-2">
-                        <h4 class="text-white font-bold text-lg uppercase italic">Diagnostic Accuracy</h4>
-                        <p class="text-gray-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed">94.8% Precision threshold.</p>
-                    </div>
-                    <div class="space-y-2">
-                        <h4 class="text-white font-bold text-lg uppercase italic">Forensic Memory</h4>
-                        <p class="text-gray-600 text-[10px] font-bold uppercase tracking-widest leading-relaxed">180+ Cycle pattern analysis.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="relative group mt-12 lg:mt-0">
-                <div class="absolute inset-0 bg-primary/10 blur-[80px] rounded-full"></div>
-                <div class="relative glass-card p-8 aspect-square flex items-center justify-center border-primary/10">
-                    <div class="w-full h-full flex flex-col items-center justify-center space-y-4 opacity-40">
-                        <div class="absolute inset-0 flex items-center justify-center scale-75 md:scale-100">
-                            <div class="w-64 h-64 border border-primary/20 rounded-full animate-pulse"></div>
-                            <div class="absolute w-48 h-48 border border-accent/20 rounded-full animate-spin-slow"></div>
-                            <div class="absolute w-32 h-32 border border-primary/40 rounded-full animate-reverse-spin"></div>
-                        </div>
-                        <i data-lucide="cpu" class="w-10 h-10 text-primary"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Bento Grid -->
-    <section class="relative py-24 px-6 max-w-7xl mx-auto">
-        <div class="text-center mb-20">
-            <h2 class="text-3xl md:text-6xl font-black text-white italic uppercase tracking-tighter mb-4 reveal-text">Clinical Ecosystem</h2>
-            <p class="text-gray-500 uppercase font-black tracking-widest text-[9px] reveal-text">Enterprise Wellness Infrastructure</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[700px]">
-            <div class="md:col-span-2 md:row-span-2 glass-card p-8 md:p-12 flex flex-col justify-between group overflow-hidden bento-item">
-                <div class="relative z-10 space-y-6">
-                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
-                        <i data-lucide="brain" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-3xl font-black text-white italic uppercase tracking-tighter">PREDICTIVE ANALYTICS</h3>
-                    <p class="text-gray-500 text-sm font-medium leading-relaxed uppercase">Forecasting health outcomes with 94% diagnostic precision across 24 systemic markers.</p>
-                </div>
-            </div>
-
-            <div class="md:col-span-2 glass-card p-8 flex flex-col justify-between bento-item">
-                <h3 class="text-xl font-black text-white italic uppercase tracking-tighter">SECURE AUTH</h3>
-                <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-2">Enterprise HIPAA-ready security.</p>
-            </div>
-
-            <div class="glass-card p-8 bento-item">
-                <h3 class="text-lg font-black text-white italic uppercase tracking-tighter">PDF AUDITS</h3>
-                <p class="text-gray-500 text-[8px] font-bold uppercase tracking-widest">Instant dossiers.</p>
-            </div>
-
-            <div class="glass-card p-8 bento-item">
-                <h3 class="text-lg font-black text-white italic uppercase tracking-tighter">LIVE FEED</h3>
-                <p class="text-gray-500 text-[8px] font-bold uppercase tracking-widest">Real-time sync.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Trust Markers -->
-    <section class="relative py-16 bg-white/[0.01] border-y border-white/5">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center items-center opacity-30">
-                <div class="space-y-2">
-                    <i data-lucide="shield-check" class="w-6 h-6 mx-auto text-primary"></i>
-                    <p class="text-[8px] font-black uppercase tracking-[0.4em] text-white">HIPAA Secure</p>
-                </div>
-                <div class="space-y-2">
-                    <i data-lucide="lock" class="w-6 h-6 mx-auto text-blue-500"></i>
-                    <p class="text-[8px] font-black uppercase tracking-[0.4em] text-white">AES-256 Auth</p>
-                </div>
-                <div class="space-y-2">
-                    <i data-lucide="stethoscope" class="w-6 h-6 mx-auto text-accent"></i>
-                    <p class="text-[8px] font-black uppercase tracking-[0.4em] text-white">MD-Verified</p>
-                </div>
-                <div class="space-y-2">
-                    <i data-lucide="globe" class="w-6 h-6 mx-auto text-purple-500"></i>
-                    <p class="text-[8px] font-black uppercase tracking-[0.4em] text-white">Global GS-3</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Final CTA -->
-    <section class="relative py-24 px-6 overflow-hidden">
-        <div class="max-w-3xl mx-auto text-center space-y-8">
-            <h2 class="cta-title text-4xl md:text-6xl font-extrabold text-white tracking-tighter uppercase italic opacity-0">
-                INITIATE YOUR <br/>
-                <span class="text-neon">LEGACY.</span>
-            </h2>
-            <div class="cta-btn opacity-0">
-                <a href="{{ url_for('register') }}" class="btn-primary inline-flex px-12 py-5 rounded-2xl text-[10px] uppercase tracking-widest font-bold">
-                    Initialize Clinical ID
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <div class="py-12 text-center border-t border-white/5 bg-black">
-        <p class="text-[9px] font-black uppercase tracking-[0.6em] text-gray-700">AI Health Intel Group | Clinical Standard v3.0</p>
-    </div>
-
-</div>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;700;900&display=swap" rel="stylesheet">
 
 <style>
-    #cinematic-container { font-family: 'Inter', sans-serif; }
-    .hero-title { text-shadow: 0 0 30px rgba(34, 197, 94, 0.2); }
-    .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 32px; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
-    .glass-card:hover { border-color: rgba(34, 197, 94, 0.2); transform: translateY(-5px); }
-    .shadow-neon { box-shadow: 0 0 40px rgba(34, 197, 94, 0.3); }
-    .animate-spin-slow { animation: spin 8s linear infinite; }
-    .animate-reverse-spin { animation: reverse-spin 12s linear infinite; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes reverse-spin { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-    html.lenis { height: auto; }
+    :root {
+        --dark-bg: #030303;
+        --neon-green: #22c55e;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+    }
+    body {
+        background-color: var(--dark-bg);
+        color: white;
+        font-family: 'Outfit', sans-serif;
+        overflow-x: hidden;
+    }
+    html.lenis {
+        height: auto;
+    }
+    .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+    }
+    .text-gradient {
+        background: linear-gradient(to right, #ffffff, #888888);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .text-neon {
+        color: var(--neon-green);
+        text-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+    }
+    
+    /* Cinematic Frame Sequence Container */
+    .sequence-container {
+        height: 400vh; /* creates scroll depth */
+        position: relative;
+    }
+    .sequence-sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Canvas Background */
+    #particle-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.6;
+    }
+    
+    .frame-content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        padding: 0 20px;
+        text-align: center;
+    }
 </style>
 
+<canvas id="particle-canvas"></canvas>
+
+<main>
+    <!-- Frame Sequence 1: The Hook -->
+    <section class="sequence-container" id="intro-sequence">
+        <div class="sequence-sticky">
+            <!-- Background Glow -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div id="core-glow" class="w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-green-500/20 rounded-full blur-[100px] opacity-0 transition-opacity duration-1000"></div>
+            </div>
+            
+            <!-- Frame 1 -->
+            <div class="frame-content" id="frame-1">
+                <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 mb-6 backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-gray-300">Neural Engine Online</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-none mb-6">
+                    <span class="text-gradient">FORESEE.</span><br/>
+                    <span class="text-neon">PREVENT.</span>
+                </h1>
+                <p class="text-gray-400 text-lg md:text-2xl max-w-2xl mx-auto font-light leading-relaxed">
+                    The next evolution of clinical intelligence. We map your biological trajectory before symptoms manifest.
+                </p>
+            </div>
+            
+            <!-- Frame 2 -->
+            <div class="frame-content" id="frame-2">
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-8">
+                    DEEP LSTM <span class="text-neon">ARCHITECTURE</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full">
+                    <div class="glass-panel p-8 text-left">
+                        <i data-lucide="activity" class="w-8 h-8 text-green-500 mb-6"></i>
+                        <h3 class="text-xl font-bold mb-2">Temporal Memory</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Analyzing 180+ historical cycles to identify microscopic metabolic decay.</p>
+                    </div>
+                    <div class="glass-panel p-8 text-left translate-y-8">
+                        <i data-lucide="cpu" class="w-8 h-8 text-green-500 mb-6"></i>
+                        <h3 class="text-xl font-bold mb-2">Neural Forecasting</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Projecting your wellness score 12 months into the future with 94.2% precision.</p>
+                    </div>
+                    <div class="glass-panel p-8 text-left">
+                        <i data-lucide="shield-alert" class="w-8 h-8 text-green-500 mb-6"></i>
+                        <h3 class="text-xl font-bold mb-2">CFD Detection</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Advanced pattern recognition for early Chronic Fatigue markers.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Frame 3 -->
+            <div class="frame-content" id="frame-3">
+                <div class="relative w-64 h-64 md:w-96 md:h-96 flex items-center justify-center mb-10">
+                    <div class="absolute inset-0 border border-white/10 rounded-full animate-[spin_10s_linear_infinite]"></div>
+                    <div class="absolute inset-4 border border-green-500/30 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+                    <div class="absolute inset-8 border border-white/5 rounded-full animate-[spin_20s_linear_infinite]"></div>
+                    <div class="absolute inset-0 bg-green-500/5 rounded-full blur-2xl animate-pulse"></div>
+                    <h2 class="text-6xl md:text-8xl font-black text-white italic z-10 tracking-tighter">94<span class="text-3xl text-green-500">%</span></h2>
+                </div>
+                <h3 class="text-2xl md:text-4xl font-bold tracking-tight max-w-2xl text-center">
+                    Diagnostic Confidence Level across 24 systemic biomarkers.
+                </h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Ecosystem Grid -->
+    <section class="py-32 px-6 relative z-10 bg-black" id="ecosystem">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 ecosystem-header opacity-0 translate-y-10">
+                <h2 class="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-4">The Clinical <span class="text-neon">Ecosystem</span></h2>
+                <p class="text-gray-500 uppercase font-bold tracking-widest text-xs">Enterprise-grade wellness infrastructure</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[250px]">
+                <!-- Large Feature -->
+                <div class="md:col-span-8 glass-panel p-10 flex flex-col justify-end relative overflow-hidden group ecosystem-card opacity-0 translate-y-10">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 transition-opacity duration-500">
+                        <i data-lucide="file-text" class="w-32 h-32 text-green-500"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="text-3xl font-black uppercase tracking-tighter mb-3">Generate Dossiers</h3>
+                        <p class="text-gray-400 font-light max-w-md">Instantly export GDPR-compliant clinical PDF reports detailing your neural risk matrix and probabilistic forecasts.</p>
+                    </div>
+                </div>
+
+                <!-- Small Feature -->
+                <div class="md:col-span-4 glass-panel p-10 flex flex-col justify-between group ecosystem-card opacity-0 translate-y-10">
+                    <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20 group-hover:scale-110 transition-transform">
+                        <i data-lucide="lock" class="w-5 h-5 text-green-500"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-tight mb-2">Secure Auth</h3>
+                        <p class="text-gray-500 text-sm font-light">HIPAA-ready AES-256 encryption & CSRF protection.</p>
+                    </div>
+                </div>
+
+                <!-- Medium Feature -->
+                <div class="md:col-span-5 glass-panel p-10 flex flex-col justify-between group ecosystem-card opacity-0 translate-y-10">
+                    <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20 group-hover:scale-110 transition-transform">
+                        <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-tight mb-2">Real-Time Dashboards</h3>
+                        <p class="text-gray-500 text-sm font-light">Visualize your temporal progression and wellness scores live.</p>
+                    </div>
+                </div>
+
+                <!-- Medium Feature -->
+                <div class="md:col-span-7 glass-panel p-10 flex flex-col justify-between group ecosystem-card opacity-0 translate-y-10">
+                    <div class="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center border border-purple-500/20 group-hover:scale-110 transition-transform">
+                        <i data-lucide="download-cloud" class="w-5 h-5 text-purple-500"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-tight mb-2">Data Portability</h3>
+                        <p class="text-gray-500 text-sm font-light">Full CSV data exports and account lifecycle purging for absolute privacy control.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grand CTA -->
+    <section class="min-h-[70vh] flex flex-col items-center justify-center relative overflow-hidden px-6 pb-20">
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+            <div class="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-gradient-to-b from-green-500/10 to-transparent rounded-full blur-[100px]"></div>
+        </div>
+        
+        <div class="relative z-10 text-center max-w-4xl space-y-12">
+            <h2 class="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none">
+                Begin Your <br/> <span class="text-neon italic">Transformation</span>
+            </h2>
+            <p class="text-gray-400 text-lg md:text-2xl font-light">Join the vanguard of predictive health.</p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
+                <a href="{{ url_for('register') }}" class="group relative px-10 py-5 bg-white text-black font-black uppercase tracking-widest rounded-full overflow-hidden w-full sm:w-auto hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-green-400 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
+                    <span class="relative z-10 flex items-center justify-center gap-2">
+                        Initialize ID <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </a>
+                <a href="{{ url_for('login') }}" class="px-10 py-5 rounded-full border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/10 transition-colors w-full sm:w-auto text-sm">
+                    Access Portal
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
 <script>
-    const lenis = new Lenis({ duration: 1.2, orientation: 'vertical', smoothWheel: true });
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
+    // Initialize Lenis for smooth scrolling
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+    })
+
+    function raf(time) {
+        lenis.raf(time)
+        requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
+
+    // Initialize GSAP ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 
+    // Initial load animation
     window.addEventListener('load', () => {
-        gsap.to('#preloader', { opacity: 0, duration: 1, onComplete: () => { document.getElementById('preloader').style.display = 'none'; startHeroAnimations(); } });
-        function startHeroAnimations() {
-            const tl = gsap.timeline();
-            tl.to('.hero-tag', { opacity: 1, y: 0, duration: 1, ease: 'power4.out' })
-              .to('.hero-title', { opacity: 1, y: 0, duration: 1, ease: 'power4.out' }, '-=0.6')
-              .to('.hero-sub', { opacity: 1, y: 0, duration: 1, ease: 'power4.out' }, '-=0.6')
-              .to('.hero-cta', { opacity: 1, y: 0, duration: 1, ease: 'power4.out' }, '-=0.6');
-        }
-        gsap.to('#scrollProgress', { width: '100%', ease: 'none', scrollTrigger: { trigger: 'body', start: 'top top', end: 'bottom bottom', scrub: 0.3 } });
+        lucide.createIcons();
+        document.getElementById('core-glow').style.opacity = '1';
         
-        // Conditional Horizontal Scroll for Desktop Only
-        if (window.innerWidth >= 768) {
-            let pt = document.getElementById('process-track');
-            gsap.to(pt, { x: () => -(pt.scrollWidth - window.innerWidth), ease: 'none', scrollTrigger: { trigger: '#process-section', start: 'top top', end: () => `+=${pt.scrollWidth}`, scrub: 1, pin: true, anticipatePin: 1 } });
-        }
+        // Frame Sequence Timeline
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#intro-sequence",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1,
+            }
+        });
 
-        gsap.from('.bento-item', { y: 50, opacity: 0, duration: 1, stagger: 0.2, ease: 'power4.out', scrollTrigger: { trigger: '.grid', start: 'top 85%' } });
-        gsap.to('.cta-title', { opacity: 1, y: 0, duration: 1, ease: 'power4.out', scrollTrigger: { trigger: '.cta-title', start: 'top 80%' } });
-        gsap.to('.cta-btn', { opacity: 1, y: 0, duration: 1, ease: 'power4.out', delay: 0.3, scrollTrigger: { trigger: '.cta-btn', start: 'top 80%' } });
+        // Frame 1 IN
+        tl.to("#frame-1", { autoAlpha: 1, duration: 0.5 })
+          // Frame 1 Hold
+          .to("#frame-1", { y: -50, duration: 1 })
+          // Frame 1 OUT
+          .to("#frame-1", { autoAlpha: 0, scale: 1.1, duration: 0.5 })
+          
+          // Frame 2 IN
+          .fromTo("#frame-2", { scale: 0.9, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5 })
+          // Frame 2 Hold
+          .to("#frame-2", { y: -50, duration: 1 })
+          // Frame 2 OUT
+          .to("#frame-2", { autoAlpha: 0, scale: 1.1, duration: 0.5 })
+          
+          // Frame 3 IN
+          .fromTo("#frame-3", { scale: 0.9, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5 })
+          // Frame 3 Hold
+          .to("#frame-3", { duration: 1 });
+
+        // Ecosystem Cards Reveal
+        gsap.to(".ecosystem-header", {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "power4.out",
+            scrollTrigger: {
+                trigger: "#ecosystem",
+                start: "top 70%"
+            }
+        });
+
+        gsap.to(".ecosystem-card", {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: 0.15,
+            ease: "power4.out",
+            scrollTrigger: {
+                trigger: "#ecosystem",
+                start: "top 60%"
+            }
+        });
     });
 
-    const canvas = document.getElementById('neuralCanvas');
+    // Particle Background System
+    const canvas = document.getElementById('particle-canvas');
     const ctx = canvas.getContext('2d');
-    let particles = [];
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize); resize();
-    class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.vx = (Math.random() - 0.5) * 0.3; this.vy = (Math.random() - 0.5) * 0.3; this.size = Math.random() * 1.5; } update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); } }
-    for (let i = 0; i < 60; i++) particles.push(new Particle());
-    function draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#22c55e'; ctx.strokeStyle = 'rgba(34, 197, 94, 0.1)'; particles.forEach((p, i) => { p.update(); ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); for (let j = i + 1; j < particles.length; j++) { const p2 = particles[j]; const d = Math.hypot(p.x - p2.x, p.y - p2.y); if (d < 120) { ctx.lineWidth = 1 - d/120; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); } } }); requestAnimationFrame(draw); }
-    draw();
-    lucide.createIcons();
+    
+    let width, height, particles;
+    
+    function initCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        
+        particles = [];
+        const particleCount = window.innerWidth < 768 ? 40 : 100;
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 1.5 + 0.5,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                opacity: Math.random() * 0.5 + 0.1
+            });
+        }
+    }
+    
+    function animateParticles() {
+        ctx.clearRect(0, 0, width, height);
+        
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            
+            if (p.x < 0) p.x = width;
+            if (p.x > width) p.x = 0;
+            if (p.y < 0) p.y = height;
+            if (p.y > height) p.y = 0;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(34, 197, 94, ${p.opacity})`;
+            ctx.fill();
+        });
+        
+        requestAnimationFrame(animateParticles);
+    }
+    
+    window.addEventListener('resize', initCanvas);
+    initCanvas();
+    animateParticles();
 </script>
 {% endblock %}
