@@ -29,7 +29,9 @@ else:
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
-import sqlite3
+import psycopg2
+import psycopg2.extras
+from psycopg2 import IntegrityError
 import datetime
 import io
 import json
@@ -63,8 +65,8 @@ except ImportError:
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey')
 
-# Render/Proxy Support (Fixes MismatchingStateError on production)
-if os.environ.get('RENDER') or os.environ.get('PROXY_FIX'):
+# General Proxy Support (Fixes MismatchingStateError on production)
+if os.environ.get('PROXY_FIX'):
     app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['PREFERRED_URL_SCHEME'] = 'https'
@@ -142,25 +144,32 @@ def calculate_health_forecast(timestamps, scores, days_to_forecast=7):
 # -------------------------
 # Database Setup
 # -------------------------
-# Using absolute path for database to avoid issues with different CWD
-DB_NAME = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'users.db')
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+def get_db_connection():
+    if not DATABASE_URL:
+        print("CRITICAL: DATABASE_URL not set.")
+        return None
+    return psycopg2.connect(DATABASE_URL)
 
 def init_db():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
+    if not conn: return
     cursor = conn.cursor()
     
     # Base tables structure
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             username TEXT UNIQUE NOT NULL,
             password TEXT
         )
     ''')
+    conn.commit()
     
-    # Self-healing Schema: Add missing columns without forbidden UNIQUE in ALTER
+    # Self-healing Schema: Add missing columns
     columns_to_add = [
-        ("google_id", "TEXT"),
+        ("google_id", "TEXT UNIQUE"),
         ("email", "TEXT"),
         ("profile_pic", "TEXT"),
         ("notifications", "INTEGER DEFAULT 1"),
@@ -169,21 +178,19 @@ def init_db():
     
     for col_name, col_type in columns_to_add:
         try:
-            cursor.execute(f"SELECT {col_name} FROM users LIMIT 1")
-        except sqlite3.OperationalError:
             cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
-            # SQLite does not support UNIQUE in ALTER, so we add a unique index separately
-            if col_name == "google_id":
-                try:
-                    cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id)")
-                except sqlite3.OperationalError: pass
+            conn.commit()
             print(f"DEBUG: Rectified missing column '{col_name}'")
+        except psycopg2.errors.DuplicateColumn:
+            conn.rollback()
+        except Exception as e:
+            conn.rollback()
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS predictions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             user_id INTEGER,
-            timestamp DATETIME,
+            timestamp TIMESTAMP,
             prediction TEXT,
             inputs_json TEXT,
             FOREIGN KEY(user_id) REFERENCES users(id)
@@ -192,7 +199,11 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()
+# Only initialize DB if DATABASE_URL is provided
+if DATABASE_URL:
+    init_db()
+else:
+    print("WARNING: Skipping init_db because DATABASE_URL is missing.")
 
 # -------------------------
 # Load Models & Encoders (Real or Mocked)
@@ -247,14 +258,15 @@ def register():
         password = request.form['password']
 
         hashed_password = generate_password_hash(password)
-        conn = sqlite3.connect(DB_NAME)
+        conn = get_db_connection()
         cursor = conn.cursor()
         try:
-            cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+            cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed_password))
             conn.commit()
             flash("Registration Successful! Please login.", "success")
             return redirect(url_for('login'))
-        except sqlite3.IntegrityError:
+        except IntegrityError:
+            conn.rollback()
             flash("Username already exists.", "danger")
         finally:
             conn.close()
@@ -266,9 +278,9 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        conn = sqlite3.connect(DB_NAME)
+        conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=?", (username,))
+        cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
         user = cursor.fetchone()
         conn.close()
 
@@ -310,28 +322,28 @@ def google_auth():
     name = user_info.get('name', email.split('@')[0])
     picture = user_info.get('picture')
     
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE google_id=?", (google_id,))
+    cursor.execute("SELECT * FROM users WHERE google_id=%s", (google_id,))
     user = cursor.fetchone()
     
     if not user:
         # Check if username is already taken
-        cursor.execute("SELECT id FROM users WHERE username=?", (name,))
+        cursor.execute("SELECT id FROM users WHERE username=%s", (name,))
         if cursor.fetchone():
             name = f"{name}_{google_id[:5]}"
             
-        cursor.execute("INSERT INTO users (username, google_id, email, profile_pic, password) VALUES (?, ?, ?, ?, ?)", 
+        cursor.execute("INSERT INTO users (username, google_id, email, profile_pic, password) VALUES (%s, %s, %s, %s, %s)", 
                        (name, google_id, email, picture, "GOOGLE_AUTH_USER"))
         conn.commit()
-        cursor.execute("SELECT * FROM users WHERE google_id=?", (google_id,))
+        cursor.execute("SELECT * FROM users WHERE google_id=%s", (google_id,))
         user = cursor.fetchone()
     else:
         # Update profile picture if it changed
-        cursor.execute("UPDATE users SET profile_pic=? WHERE google_id=?", (picture, google_id))
+        cursor.execute("UPDATE users SET profile_pic=%s WHERE google_id=%s", (picture, google_id))
         conn.commit()
         # Refresh user data
-        cursor.execute("SELECT * FROM users WHERE google_id=?", (google_id,))
+        cursor.execute("SELECT * FROM users WHERE google_id=%s", (google_id,))
         user = cursor.fetchone()
         
     conn.close()
@@ -423,13 +435,13 @@ def predict():
                 p_normal = probabilities[2]
                 risk_score = int((p_chances * 50 + p_cfs * 100)) # Simple mapping
                 
-                conn = sqlite3.connect(DB_NAME)
+                conn = get_db_connection()
                 cursor = conn.cursor()
                 # Save input data as JSON string
                 inputs_data = {col: request.form.get(col) for col in columns}
                 inputs_json = json.dumps(inputs_data)
                 
-                cursor.execute("INSERT INTO predictions (user_id, timestamp, prediction, inputs_json) VALUES (?, ?, ?, ?)", 
+                cursor.execute("INSERT INTO predictions (user_id, timestamp, prediction, inputs_json) VALUES (%s, %s, %s, %s)", 
                                (session['user_id'], datetime.datetime.now(), prediction, inputs_json))
                 conn.commit()
                 conn.close()
@@ -471,9 +483,9 @@ def history():
         flash("Please log in first.", "warning")
         return redirect(url_for('login'))
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, prediction, inputs_json FROM predictions WHERE user_id=? ORDER BY timestamp DESC", (session['user_id'],))
+    cursor.execute("SELECT timestamp, prediction, inputs_json FROM predictions WHERE user_id=%s ORDER BY timestamp DESC", (session['user_id'],))
     user_predictions = cursor.fetchall()
     conn.close()
     
@@ -536,9 +548,9 @@ def dashboard():
         flash("Please log in first.", "warning")
         return redirect(url_for('login'))
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, prediction, inputs_json FROM predictions WHERE user_id=? ORDER BY timestamp ASC", (session['user_id'],))
+    cursor.execute("SELECT timestamp, prediction, inputs_json FROM predictions WHERE user_id=%s ORDER BY timestamp ASC", (session['user_id'],))
     user_predictions = cursor.fetchall()
     conn.close()
 
@@ -624,13 +636,13 @@ def simulate():
         # Convert to float for model
         input_data = [float(x) for x in data.values()]
         
-        if MODEL:
+        if ML_SUPPORTED:
             # Mock or Real Model prediction
             import numpy as np
             X = np.array([input_data])
             # Mocking probabilities for simulation feel
             probabilities = [0.8, 0.15, 0.05] if input_data[0] < 80 else [0.2, 0.4, 0.4]
-            prediction = class_labels[np.argmax(probabilities)]
+            prediction = target_encoder.classes_.tolist()[np.argmax(probabilities)]
         else:
             prediction = "Normal"
             probabilities = [0.9, 0.05, 0.05]
@@ -650,9 +662,9 @@ def export_csv():
         flash("Authorization required to export data.", "warning")
         return redirect(url_for('login'))
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, prediction, inputs_json FROM predictions WHERE user_id=?", (session['user_id'],))
+    cursor.execute("SELECT timestamp, prediction, inputs_json FROM predictions WHERE user_id=%s", (session['user_id'],))
     rows = cursor.fetchall()
     conn.close()
 
@@ -680,9 +692,9 @@ def download_report():
     data = session['latest_report']
     
     # Calculate Forecast for the report
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, prediction FROM predictions WHERE user_id=? ORDER BY timestamp ASC", (session['user_id'],))
+    cursor.execute("SELECT timestamp, prediction FROM predictions WHERE user_id=%s ORDER BY timestamp ASC", (session['user_id'],))
     user_predictions = cursor.fetchall()
     conn.close()
     
@@ -724,8 +736,8 @@ def download_report():
     # Info Section
     pdf.set_font("Arial", 'B', 12)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(100, 10, txt=f"Patient: {session['username']}")
-    pdf.cell(90, 10, txt=f"Date: {data['timestamp']}", align='R', ln=True)
+    pdf.cell(100, 10, f"Patient: {session['username']}")
+    pdf.cell(90, 10, f"Date: {data['timestamp']}", align='R', ln=1)
     pdf.line(10, 62, 200, 62)
     pdf.ln(10)
 
@@ -735,25 +747,25 @@ def download_report():
     pdf.set_y(80)
     pdf.set_font("Arial", 'B', 16)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(190, 10, txt=f"DIAGNOSIS: {data['prediction']}", align='C', ln=True)
+    pdf.cell(190, 10, f"DIAGNOSIS: {data['prediction']}", align='C', ln=1)
     
     pdf.set_font("Arial", 'B', 12)
     pdf.set_text_color(34, 197, 94)
-    pdf.cell(190, 10, txt=f"CLINICAL RISK SCORE: {data['risk_score']}/100", align='C', ln=True)
+    pdf.cell(190, 10, f"CLINICAL RISK SCORE: {data['risk_score']}/100", align='C', ln=1)
     pdf.ln(15)
 
     # Probabilities
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Arial", 'B', 12)
-    pdf.cell(190, 10, txt="PROBABILISTIC DISTRIBUTION:", ln=True)
+    pdf.cell(190, 10, "PROBABILISTIC DISTRIBUTION:", ln=1)
     pdf.set_font("Arial", '', 11)
     for label, prob in zip(data['class_labels'], data['probabilities']):
-        pdf.cell(190, 8, txt=f"  - {label}: {prob:.2%}", ln=True)
+        pdf.cell(190, 8, f"  - {label}: {prob:.2%}", ln=1)
     pdf.ln(10)
 
     # Input Audit
     pdf.set_font("Arial", 'B', 12)
-    pdf.cell(190, 10, txt="Input Data Audit:", ln=True)
+    pdf.cell(190, 10, "Input Data Audit:", ln=1)
     pdf.set_font("Arial", '', 9)
     sorted_inputs = sorted(data['inputs'].items())
     
@@ -762,13 +774,13 @@ def download_report():
     for i, (key, val) in enumerate(sorted_inputs):
         display_key = key.replace('_', ' ').title()
         fill = (i % 2 == 0)
-        pdf.cell(95, 7, txt=f"  {display_key}:", border=1, fill=fill)
-        pdf.cell(95, 7, txt=f"  {val}", border=1, ln=True, fill=fill)
+        pdf.cell(95, 7, f"  {display_key}:", border=1, fill=fill)
+        pdf.cell(95, 7, f"  {val}", border=1, ln=1, fill=fill)
 
     # Tips Section
     pdf.ln(10)
     pdf.set_font("Arial", 'B', 12)
-    pdf.cell(190, 10, txt="Clinical Recommendations:", ln=True)
+    pdf.cell(190, 10, "Clinical Recommendations:", ln=1)
     pdf.set_font("Arial", '', 10)
     if 'Chronic' in data['prediction']:
         tips = ["- Immediate consultation with a fatigue specialist is recommended.",
@@ -784,22 +796,22 @@ def download_report():
                 "- Practice mindfulness to manage daily cognitive loads."]
     
     for tip in tips:
-        pdf.multi_cell(190, 8, txt=tip)
+        pdf.multi_cell(190, 8, tip)
 
     # Forecasting Section (Predictive Outlook)
     pdf.ln(10)
     pdf.set_fill_color(34, 197, 94)
     pdf.set_text_color(255, 255, 255)
     pdf.set_font("Arial", 'B', 12)
-    pdf.cell(190, 10, txt=" NEURO-PREDICTIVE OUTLOOK (7-DAY PROJECTION)", ln=True, fill=True)
+    pdf.cell(190, 10, " NEURO-PREDICTIVE OUTLOOK (7-DAY PROJECTION)", ln=1, fill=True)
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Arial", 'I', 10)
     pdf.ln(5)
-    pdf.multi_cell(190, 8, txt=forecast_text)
+    pdf.multi_cell(190, 8, forecast_text)
     pdf.ln(10)
     pdf.set_font("Arial", '', 8)
     pdf.set_text_color(150, 150, 150)
-    pdf.multi_cell(190, 5, txt="NOTE: Projections are based on linear regression of historical markers and intended for clinical guidance only. Statistical confidence increases with audit frequency.")
+    pdf.multi_cell(190, 5, "NOTE: Projections are based on linear regression of historical markers and intended for clinical guidance only. Statistical confidence increases with audit frequency.")
 
     output = pdf.output(dest='S')
     response = make_response(output)

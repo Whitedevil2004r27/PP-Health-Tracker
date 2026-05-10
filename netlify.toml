@@ -1,0 +1,14 @@
+[build]
+  # For Python projects on Netlify, you typically install requirements.
+  # Note: running a full Flask app requires setting it up as a serverless function.
+  command = "pip install -r requirements.txt"
+  publish = "static"
+
+[functions]
+  # If you create serverless functions, specify their directory here
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api"
+  status = 200

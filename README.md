@@ -62,10 +62,11 @@ The platform features a signature **"Liquid Glass"** heritage aesthetic, charact
    ```
    *The diagnostics portal will be accessible at `http://127.0.0.1:3000`.*
 
-### Production Deployment (Render.com)
-The application is pre-configured with `render.yaml` and `ProxyFix` for instant deployment. 
-- Ensure `RENDER=True` is in your environment variables.
-- The `lstm_multiclass_model.h5` neural weights are tracked for production parity.
+### Production Deployment (Netlify)
+The application is pre-configured with `netlify.toml` for deployment.
+- Netlify Functions require a WSGI adapter like `serverless-wsgi` to run Flask applications.
+- Ensure your environment variables (like `SECRET_KEY` and Google OAuth credentials) are set in the Netlify dashboard.
+- Note: SQLite databases do not persist across requests in serverless environments like Netlify. Consider migrating to a managed database like PostgreSQL for production.
 
 ## 📜 Neural Diagnostic Protocol
 The system uses a multi-stage data synthesis protocol:

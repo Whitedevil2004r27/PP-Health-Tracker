@@ -1,96 +1,105 @@
-import tkinter as tk
-from tkinter import messagebox, ttk
-import numpy as np
-import joblib
-from tensorflow.keras.models import load_model
+import sys
+import os
 
-# -------------------------
-# Load artifacts
-# -------------------------
-model = load_model("lstm_multiclass_model.h5")
-scaler = joblib.load("scaler.pkl")
-label_encoders = joblib.load("label_encoders.pkl")
-target_encoder = joblib.load("target_encoder.pkl")
+# Ensure app can be imported
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-# -------------------------
-# Features
-# -------------------------
-numerical_cols = ["age", "sleep_quality_index", "brain_fog_level",
-                  "physical_pain_score", "stress_level", "depression_phq9_score",
-                  "fatigue_severity_scale_score", "pem_duration_hours",
-                  "hours_of_sleep_per_night", "pem_present"]
+from app import app, get_db_connection
+import uuid
+from werkzeug.security import generate_password_hash
 
-categorical_cols = ["gender", "work_status", "social_activity_level",
-                    "exercise_frequency", "meditation_or_mindfulness"]
-
-columns = numerical_cols + categorical_cols
-
-root = tk.Tk()
-root.title("Diagnosis Prediction")
-
-entries = {}
-
-# -------------------------
-# Prediction function
-# -------------------------
-def predict():
+def run_tests():
+    print("Starting Neon PostgreSQL Integration Verification...\n")
+    
+    conn = get_db_connection()
+    if not conn:
+        print("FAILED: Could not connect to Neon PostgreSQL. Check DATABASE_URL.")
+        sys.exit(1)
+        
+    print("PASSED 1. Database Connection: SUCCESS")
+    
+    # Generate unique test user
+    test_user = f"testuser_{uuid.uuid4().hex[:8]}"
+    test_pass = "testpassword"
+    hashed_pass = generate_password_hash(test_pass)
+    
+    cursor = conn.cursor()
+    
+    # 1. Test INSERT (Registration)
     try:
-        input_vals = []
-        # Collect values
-        for col in columns:
-            if col in categorical_cols:
-                val = entries[col].get()
-                if val == '':
-                    messagebox.showerror("Input Error", f"Select value for '{col}'")
-                    return
-                le = label_encoders[col]
-                input_vals.append(le.transform([val])[0])
-            else:
-                val = entries[col].get()
-                if val == '':
-                    messagebox.showerror("Input Error", f"Enter value for '{col}'")
-                    return
-                input_vals.append(float(val))
-
-        # Scale
-        input_arr = np.array(input_vals).reshape(1, -1)
-        input_scaled = scaler.transform(input_arr)
-
-        # Reshape for LSTM
-        input_lstm = input_scaled.reshape((1, input_scaled.shape[1], 1))
-
-        # Predict
-        pred_probs = model.predict(input_lstm)
-        pred_class = np.argmax(pred_probs, axis=1)[0]
-        pred_label = target_encoder.inverse_transform([pred_class])[0]
-
-        messagebox.showinfo("Prediction Result", f"Predicted Diagnosis: {pred_label}")
-
+        cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s) RETURNING id", (test_user, hashed_pass))
+        user_id = cursor.fetchone()[0]
+        conn.commit()
+        print("PASSED 2. CRUD - Create User (INSERT): SUCCESS")
     except Exception as e:
-        messagebox.showerror("Error", str(e))
+        print(f"FAILED to Insert User: {e}")
+        sys.exit(1)
+        
+    # 2. Test SELECT (Login)
+    try:
+        cursor.execute("SELECT * FROM users WHERE username=%s", (test_user,))
+        user = cursor.fetchone()
+        if user and user[1] == test_user:
+            print("PASSED 3. CRUD - Read User (SELECT): SUCCESS")
+        else:
+            print("FAILED: User not found after insert.")
+            sys.exit(1)
+    except Exception as e:
+        print(f"FAILED to Select User: {e}")
+        sys.exit(1)
+        
+    # 3. Test UPDATE (Profile Settings Update)
+    try:
+        cursor.execute("UPDATE users SET notifications=0 WHERE id=%s", (user_id,))
+        conn.commit()
+        
+        cursor.execute("SELECT notifications FROM users WHERE id=%s", (user_id,))
+        notif = cursor.fetchone()[0]
+        if notif == 0:
+            print("PASSED 4. CRUD - Update User Settings (UPDATE): SUCCESS")
+        else:
+            print("FAILED: Update did not persist.")
+            sys.exit(1)
+    except Exception as e:
+        print(f"FAILED to Update User: {e}")
+        sys.exit(1)
+        
+    # 4. Test Relationships & Foreign Keys (Predictions)
+    try:
+        from datetime import datetime
+        cursor.execute("INSERT INTO predictions (user_id, timestamp, prediction, inputs_json) VALUES (%s, %s, %s, %s) RETURNING id",
+                       (user_id, datetime.now(), "Normal", '{"test": true}'))
+        pred_id = cursor.fetchone()[0]
+        conn.commit()
+        
+        cursor.execute("SELECT * FROM predictions WHERE user_id=%s", (user_id,))
+        preds = cursor.fetchall()
+        if len(preds) == 1:
+            print("PASSED 5. Relationships - Create Prediction with Foreign Key: SUCCESS")
+        else:
+            print("FAILED: Prediction not found.")
+            sys.exit(1)
+    except Exception as e:
+        print(f"FAILED to Insert Prediction: {e}")
+        sys.exit(1)
 
-# -------------------------
-# Create input fields
-# -------------------------
-row = 0
-# Numerical inputs
-for col in numerical_cols:
-    tk.Label(root, text=col).grid(row=row, column=0, sticky='w', padx=10, pady=5)
-    ent = tk.Entry(root)
-    ent.grid(row=row, column=1, padx=10, pady=5)
-    entries[col] = ent
-    row += 1
-
-# Categorical inputs (dropdown)
-for col in categorical_cols:
-    tk.Label(root, text=col).grid(row=row, column=0, sticky='w', padx=10, pady=5)
-    values = label_encoders[col].classes_.tolist()
-    combo = ttk.Combobox(root, values=values, state="readonly")
-    combo.grid(row=row, column=1, padx=10, pady=5)
-    entries[col] = combo
-    row += 1
-
-# Predict button
-tk.Button(root, text="Predict", command=predict).grid(row=row, column=0, columnspan=2, pady=20)
-
-root.mainloop()
+    # 5. Test DELETE (Cleanup)
+    try:
+        cursor.execute("DELETE FROM predictions WHERE user_id=%s", (user_id,))
+        cursor.execute("DELETE FROM users WHERE id=%s", (user_id,))
+        conn.commit()
+        
+        cursor.execute("SELECT * FROM users WHERE id=%s", (user_id,))
+        if not cursor.fetchone():
+            print("PASSED 6. CRUD - Delete and Cleanup (DELETE): SUCCESS")
+        else:
+            print("FAILED: Cleanup failed.")
+            sys.exit(1)
+    except Exception as e:
+        print(f"FAILED to Delete User/Prediction: {e}")
+        sys.exit(1)
+        
+    print("\nALL TESTS PASSED: Neon PostgreSQL is fully integrated and functional!")
+    
+if __name__ == "__main__":
+    run_tests()
