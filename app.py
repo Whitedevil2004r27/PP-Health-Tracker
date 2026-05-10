@@ -30,6 +30,10 @@ if not os.environ.get('VERCEL') and not os.environ.get('RENDER'):
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
+from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
 import psycopg2
 import psycopg2.extras
 from psycopg2 import IntegrityError
@@ -85,6 +89,9 @@ if os.environ.get('VERCEL') or os.environ.get('PROXY_FIX'):
 
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_NAME'] = 'pp_health_session'
+csrf = CSRFProtect(app)
+limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"], storage_uri="memory://")
+Talisman(app, content_security_policy=None)
 
 # OAuth Configuration
 oauth = OAuth(app)
@@ -272,6 +279,7 @@ def home():
     return render_template('index.html')
 
 @app.route('/register', methods=['GET','POST'])
+@limiter.limit("5 per hour")
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -293,6 +301,7 @@ def register():
     return render_template('register.html')
 
 @app.route('/login', methods=['GET','POST'])
+@limiter.limit("10 per minute")
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -375,6 +384,7 @@ def google_auth():
     return redirect(url_for('predict'))
 
 @app.route('/predict', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def predict():
     if 'username' not in session:
         flash("Please log in first.", "warning")

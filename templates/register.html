@@ -41,6 +41,7 @@
 
             <!-- Register Form -->
             <form action="{{ url_for('register') }}" method="POST" class="space-y-6" id="registerForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="space-y-4">
                     <div class="relative group">
                         <i data-lucide="user-plus" class="absolute left-5 top-5 text-gray-600 group-focus-within:text-primary transition-colors w-5 h-5"></i>

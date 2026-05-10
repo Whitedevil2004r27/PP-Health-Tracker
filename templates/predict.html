@@ -34,6 +34,7 @@
             </div>
 
             <form action="{{ url_for('predict') }}" method="POST" id="predictForm" class="p-6 md:p-10 space-y-8 md:space-y-12">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
                 <!-- STEP 1: Personal Info -->
                 <div id="step-1" class="step-container space-y-10 animate__animated">
