@@ -42,13 +42,20 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 # Authentication related (Safe import wrapper)
 try:
     from authlib.integrations.flask_client import OAuth
-    from fpdf import FPDF
     AUTH_SUPPORTED = True
-except ImportError:
+except ImportError as e:
+    print(f"AUTH ERROR: Authlib not found: {e}")
     AUTH_SUPPORTED = False
     class OAuth:
         def __init__(self, app=None): pass
-        def register(self, **kwargs): return type('obj', (object,), {'authorize_redirect': lambda self, x: "Redirecting...", 'authorize_access_token': lambda self: {}})()
+        def register(self, **kwargs): return type('obj', (object,), {'authorize_redirect': lambda self, x: redirect(x), 'authorize_access_token': lambda self: {}})()
+
+try:
+    from fpdf import FPDF
+    PDF_SUPPORTED = True
+except ImportError as e:
+    print(f"PDF ERROR: FPDF not found: {e}")
+    PDF_SUPPORTED = False
 
 # Machine Learning related (Safe import wrapper)
 try:
