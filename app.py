@@ -26,7 +26,8 @@ else:
     print(f"DEBUG SUCCESS: GOOGLE_CLIENT_ID loaded (Length: {len(google_id)})")
 
 # For local development with HTTP
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+if not os.environ.get('VERCEL') and not os.environ.get('RENDER'):
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
 import psycopg2
@@ -65,11 +66,13 @@ except ImportError:
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'supersecretkey')
 
-# General Proxy Support (Fixes MismatchingStateError on production)
-if os.environ.get('PROXY_FIX'):
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+# Automatic Proxy Support for Vercel/Production
+if os.environ.get('VERCEL') or os.environ.get('PROXY_FIX'):
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1, x_port=1, x_prefix=1)
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['PREFERRED_URL_SCHEME'] = 'https'
+    # Force OAuth to use HTTPS
+    os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_NAME'] = 'pp_health_session'
@@ -312,9 +315,9 @@ def logout():
 
 @app.route('/login/google')
 def google_login():
-    # Dynamic redirect detection (Local vs. Render)
-    # Using _external=True ensures the full protocol/host is matched
-    redirect_uri = url_for('google_auth', _external=True)
+    # Force HTTPS for the redirect_uri in production
+    scheme = 'https' if (os.environ.get('VERCEL') or os.environ.get('PROXY_FIX')) else 'http'
+    redirect_uri = url_for('google_auth', _external=True, _scheme=scheme)
     return google.authorize_redirect(redirect_uri)
 
 @app.route('/google/auth')
