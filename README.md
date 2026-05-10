@@ -28,16 +28,14 @@
 
 ## 📸 Interface Showcases
 
-*(Replace the paths below with actual screenshot URLs once uploaded to your repository's `/assets` folder)*
-
 | 🎛️ Clinical Dashboard | 🔬 Neural Audit Pipeline |
 | :---: | :---: |
-| <img src="https://placehold.co/600x400/020202/22c55e?text=Clinical+Dashboard+Screenshot" alt="Dashboard" width="100%"/> | <img src="https://placehold.co/600x400/020202/22c55e?text=Multi-Step+Prediction+Form" alt="Audit Form" width="100%"/> |
+| <img src="assets/dashboard.png" alt="Dashboard" width="100%"/> | <img src="assets/predict.png" alt="Audit Form" width="100%"/> |
 | *Real-time analytics, trend variances, and risk severity indexes.* | *Interactive, multi-step biometric ingestion flow.* |
 
 | 🚀 Landing Page | 📊 Prediction Results |
 | :---: | :---: |
-| <img src="https://placehold.co/600x400/020202/22c55e?text=Cinematic+Landing+Page" alt="Landing Page" width="100%"/> | <img src="https://placehold.co/600x400/020202/22c55e?text=Inference+Results" alt="Results" width="100%"/> |
+| <img src="assets/landing.png" alt="Landing Page" width="100%"/> | <img src="assets/results.png" alt="Results" width="100%"/> |
 | *Scroll-driven story telling with temporal intelligence insights.* | *Instant diagnostic classification and ML confidence metrics.* |
 
 ---
