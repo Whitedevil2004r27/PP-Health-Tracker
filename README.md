@@ -1,81 +1,139 @@
-# AI-Powered Predictive Health Tracker | Clinical Intelligence 🚀🧠
+<div align="center">
+  <img src="https://img.icons8.com/nolan/96/artificial-intelligence.png" alt="AI Core" />
+  
+  # PP-Health-Tracker
+  **Cinematic Predictive Clinical Intelligence**
+  
+  [![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?logo=vercel)](https://pp-health-tracker.vercel.app/)
+  [![Neon](https://img.shields.io/badge/Database-Neon_PostgreSQL-00e599?logo=postgresql)](https://neon.tech/)
+  [![Python](https://img.shields.io/badge/Backend-Flask_Python-3776AB?logo=python&logoColor=white)]()
+  [![TailwindCSS](https://img.shields.io/badge/UI-Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)]()
 
-An advanced, high-fidelity healthcare diagnostics platform utilizing **LSTM (Long Short-Term Memory)** neural networks for systemic wellness modeling and forensic risk assessment.
+</div>
 
-![Health Tracker Banner](https://images.unsplash.com/photo-1576091160550-2173dad99901?auto=format&fit=crop&q=80&w=1200)
-
-## 💎 Liquid Glass Architecture
-The platform features a signature **"Liquid Glass"** heritage aesthetic, characterized by high-index backdrop blurs, neon emerald accents, and a unified responsive navigation system.
-
-- **Desktop**: Floating Top-Navigation Bar for synchronized workspace auditing.
-- **Mobile**: Thumb-friendly Bottom-Navigation with a centralized "Analyze" action.
-
-## ✨ V3.0 Clinical Features
-
-- **🧠 Multi-Stage LSTM Engine**: Advanced predictive modeling for systemic health markers (Resting HR, HRV, BP Intensity).
-- **🛡️ Stabilization & Security**: 
-  - **Google OAuth 2.0**: Hardened authentication with session-state verification.
-  - **Proxy Protocol**: Native **ProxyFix** integration for seamless deployment on Render.com (HTTPS).
-- **📂 Forensic Documentation**: 
-  - **Neural Specifications**: Detailed logic for the LSTM diagnostic sequences.
-  - **Clinical Center**: Integrated Help Center, Privacy Policy, and Terms of Service.
-- **⚙️ Integrated Identity Module**: Comprehensive profile management, UI density preferences, and persistent notification settings.
-- **📊 Neural Forecasts**: Real-time visualization of systemic wellness progression over time.
-
-## 🛠️ Technology Stack
-
-- **Intelligence**: TensorFlow / Keras (LSTM models), Scikit-Learn (Clinical Encoders).
-- **Backend**: Flask (Python 3.12+).
-- **Database**: Self-healing SQLite3 with automated schema migration.
-- **Security**: Authlib (OAuth), Werkzeug (ProxyFix).
-- **Frontend**: TailwindCSS (Custom Logic), Lucide Icons, Glassmorphism CSS.
-
-## 🚀 Deployment & Installation
-
-### Prerequisites
-- Python 3.8+ (Verified on Python 3.12/3.13)
-- Google Cloud Console Credentials (for OAuth authorization)
-
-### Local Configuration
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/Whitedevil2004r27/PP-Health-Tracker.git
-   cd PP-Health-Tracker
-   ```
-
-2. **Environment Setup**:
-   Create a `.env` file in the root:
-   ```env
-   SECRET_KEY=your_clinical_key
-   GOOGLE_CLIENT_ID=your_id.apps.googleusercontent.com
-   GOOGLE_CLIENT_SECRET=your_client_secret
-   ```
-
-3. **Install Core Intelligence**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Initialize System**:
-   ```bash
-   python app.py
-   ```
-   *The diagnostics portal will be accessible at `http://127.0.0.1:3000`.*
-
-### Production Deployment (Netlify)
-The application is pre-configured with `netlify.toml` for deployment.
-- Netlify Functions require a WSGI adapter like `serverless-wsgi` to run Flask applications.
-- Ensure your environment variables (like `SECRET_KEY` and Google OAuth credentials) are set in the Netlify dashboard.
-- Note: SQLite databases do not persist across requests in serverless environments like Netlify. Consider migrating to a managed database like PostgreSQL for production.
-
-## 📜 Neural Diagnostic Protocol
-The system uses a multi-stage data synthesis protocol:
-1. **Autonomic Markers**: Synthesis of resting vitals.
-2. **Systemic Fatigue**: Modeling sleep flux and cognitive depth.
-3. **Forensic Audit**: Generating clinical PDF reports for patient history.
-
-## 📄 License
-Distributed under the MIT License. Developed for Semester 8 - Final Project.
+## 🌐 Overview
+**PP-Health-Tracker** is an enterprise-grade, AI-powered metabolic and systemic health tracking platform. Built to feel like a high-end cinematic SaaS product, it leverages a multi-stage **LSTM Neural Network** to analyze 24 different systemic biomarkers and forecast wellness trajectories, specifically targeting the detection and progression of **Chronic Fatigue Syndrome (CFS)**.
 
 ---
-*Global Clinical Standard | AI Health Intel Group*
+
+## ✨ Core Features
+
+*   **🧠 Neural Forecast Engine**: Integrates a pre-trained LSTM (Long Short-Term Memory) deep learning model to provide a forensic wellness projection based on temporal health markers.
+*   **🎨 Cinematic SaaS UI/UX**: A fully responsive, dark-mode-first aesthetic ("Deep Carbon" & "Neural Green") featuring glassmorphism, GSAP scroll-driven animations, Lenis smooth scrolling, and an interactive canvas particle grid.
+*   **🛡️ Self-Healing Data Pipeline**: Built-in algorithmic database synchronization that intercepts and auto-resolves PostgreSQL sequence desyncs (e.g., `predictions_pkey` violations) in real-time.
+*   **🔐 Seamless Authentication**: Enterprise-grade Google OAuth 2.0 integration with automatic session persistence and strict HTTPS protocol enforcement.
+*   **📄 Clinical Dossier Export**: One-click generation of beautifully formatted PDF health audits detailing probabilistic distributions and risk severities.
+
+---
+
+## 📸 Interface Showcases
+
+*(Replace the paths below with actual screenshot URLs once uploaded to your repository's `/assets` folder)*
+
+| 🎛️ Clinical Dashboard | 🔬 Neural Audit Pipeline |
+| :---: | :---: |
+| <img src="https://placehold.co/600x400/020202/22c55e?text=Clinical+Dashboard+Screenshot" alt="Dashboard" width="100%"/> | <img src="https://placehold.co/600x400/020202/22c55e?text=Multi-Step+Prediction+Form" alt="Audit Form" width="100%"/> |
+| *Real-time analytics, trend variances, and risk severity indexes.* | *Interactive, multi-step biometric ingestion flow.* |
+
+| 🚀 Landing Page | 📊 Prediction Results |
+| :---: | :---: |
+| <img src="https://placehold.co/600x400/020202/22c55e?text=Cinematic+Landing+Page" alt="Landing Page" width="100%"/> | <img src="https://placehold.co/600x400/020202/22c55e?text=Inference+Results" alt="Results" width="100%"/> |
+| *Scroll-driven story telling with temporal intelligence insights.* | *Instant diagnostic classification and ML confidence metrics.* |
+
+---
+
+## 🏗️ Technical Architecture
+
+### Backend Stack
+*   **Framework**: Python Flask
+*   **Database**: Neon PostgreSQL (Serverless)
+*   **Driver**: `psycopg2-binary`
+*   **Authentication**: `Authlib` (Google OAuth)
+*   **PDF Generation**: `fpdf`
+
+### Machine Learning
+*   **Engine**: TensorFlow / Keras (`lstm_multiclass_model.h5`)
+*   **Pre-processing**: Scikit-learn (`scaler.pkl`, `label_encoders.pkl`)
+*   **Data Handling**: NumPy, Joblib
+
+### Frontend Stack
+*   **Styling**: Tailwind CSS (Vanilla via CDN)
+*   **Typography**: Google Fonts (Outfit & Inter)
+*   **Animations**: GSAP (ScrollTrigger) & HTML5 Canvas
+*   **Smooth Scroll**: Lenis
+*   **Icons**: Lucide Icons
+
+---
+
+## 🚀 Local Development Setup
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Whitedevil2004r27/PP-Health-Tracker.git
+cd PP-Health-Tracker
+```
+
+### 2. Set up a Virtual Environment
+```bash
+python -m venv venv
+# On Windows
+venv\Scripts\activate
+# On macOS/Linux
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Environment Variables (`.env`)
+Create a `.env` file in the root directory and populate it with your credentials:
+```env
+# Flask Core
+SECRET_KEY=your_super_secret_flask_key
+
+# Database
+DATABASE_URL=postgresql://user:password@endpoint.neon.tech/neondb?sslmode=require
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Enforce HTTPS locally if needed
+PREFERRED_URL_SCHEME=http 
+```
+
+### 5. Run the Application
+```bash
+python app.py
+```
+The portal will be accessible at `http://127.0.0.1:5000`.
+
+---
+
+## ☁️ Deployment Guide (Vercel)
+
+This application is heavily optimized for serverless deployment on **Vercel**.
+
+1. **Vercel Project Setup**: Import the GitHub repository into your Vercel dashboard.
+2. **Environment Variables**: Add all variables from your `.env` file into the Vercel project settings.
+3. **Important Note on `vercel.json`**: The project includes a `vercel.json` that redirects all routes to `app.py`.
+4. **Google Console Configuration**: 
+   Ensure your Google Cloud Console Authorized Redirect URIs match your Vercel deployment:
+   *   `https://<your-vercel-domain>.vercel.app/google/auth`
+
+---
+
+## 🛠️ Database Schema
+
+The system automatically initializes and self-heals missing columns. The core schema includes:
+*   `users`: ID, username, password hash, google_id, email, profile_pic, notifications.
+*   `predictions`: ID, user_id, timestamp, prediction (Result), inputs_json (Raw biometrics).
+
+---
+
+<div align="center">
+  <p>Engineered with precision for Clinical Intelligence.</p>
+  <p>&copy; 2026 AI Health Intel Group</p>
+</div>
