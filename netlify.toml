@@ -5,8 +5,8 @@
   publish = "static"
 
 [functions]
-  # If you create serverless functions, specify their directory here
   directory = "netlify/functions"
+  included_files = ["app.py", "static/**", "templates/**", "*.h5", "*.pkl"]
 
 [[redirects]]
   from = "/*"
