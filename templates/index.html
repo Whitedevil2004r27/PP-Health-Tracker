@@ -205,35 +205,35 @@
         </div>
     </section>
 
-    <!-- Grand CTA -->
-    <section class="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden px-6 pt-32 pb-60 md:pb-40 bg-black">
+    <!-- Compact Professional CTA -->
+    <section class="py-20 md:py-32 w-full flex flex-col items-center justify-center relative overflow-hidden px-6 bg-black">
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-            <div class="w-[120vw] h-[120vw] max-w-[1400px] max-h-[1400px] bg-green-500/15 rounded-full blur-[140px] opacity-60 animate-pulse"></div>
+            <div class="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-green-500/5 rounded-full blur-[100px] opacity-40"></div>
         </div>
         
-        <div class="relative z-10 text-center w-full max-w-7xl mx-auto space-y-16 md:space-y-24">
-            <div class="space-y-6 md:space-y-10">
-                <div class="inline-flex items-center space-x-3 px-6 py-2 rounded-full border border-green-500/30 bg-green-500/5 backdrop-blur-xl mb-4 opacity-80">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
-                    <span class="text-[10px] font-black uppercase tracking-[0.5em] text-green-400">Final Protocol</span>
+        <div class="relative z-10 text-center w-full max-w-4xl mx-auto space-y-10">
+            <div class="space-y-4">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-green-500/20 bg-green-500/5 backdrop-blur-md mb-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                    <span class="text-[9px] font-black uppercase tracking-[0.3em] text-green-400">Portal Access</span>
                 </div>
-                <h2 class="text-5xl sm:text-7xl md:text-9xl lg:text-[10rem] font-black uppercase tracking-tighter leading-[0.8] text-white">
-                    Begin Your <br/> <span class="text-neon italic">Transformation</span>
+                <h2 class="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter leading-tight text-white">
+                    Begin Your <span class="text-neon italic">Transformation</span>
                 </h2>
-                <p class="text-gray-400 text-lg md:text-3xl font-light max-w-3xl mx-auto leading-relaxed">
-                    Join the global vanguard of predictive health. Initialize your clinical neural profile and secure your metabolic legacy today.
+                <p class="text-gray-500 text-sm md:text-lg font-light max-w-xl mx-auto leading-relaxed">
+                    Join the vanguard of predictive health. Initialize your clinical profile and secure your wellness trajectory.
                 </p>
             </div>
             
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
-                <a href="{{ url_for('register') }}" class="group relative px-12 py-6 bg-white text-black font-black uppercase tracking-[0.2em] rounded-2xl overflow-hidden w-full sm:w-auto hover:scale-110 transition-all duration-500 shadow-[0_0_50px_rgba(255,255,255,0.2)]">
-                    <div class="absolute inset-0 bg-green-400 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-out z-0"></div>
-                    <span class="relative z-10 flex items-center justify-center gap-3 text-sm">
-                        Initialize ID <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-2 transition-transform"></i>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2 pb-20 md:pb-0">
+                <a href="{{ url_for('register') }}" class="group relative px-8 py-4 bg-white text-black font-bold uppercase tracking-widest rounded-xl overflow-hidden w-full sm:w-auto hover:scale-105 transition-all duration-300">
+                    <div class="absolute inset-0 bg-green-400 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
+                    <span class="relative z-10 flex items-center justify-center gap-2 text-xs">
+                        Get Started <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     </span>
                 </a>
-                <a href="{{ url_for('login') }}" class="px-12 py-6 rounded-2xl border border-white/20 text-white font-bold uppercase tracking-[0.2em] hover:bg-white/10 transition-all w-full sm:w-auto text-sm backdrop-blur-md hover:border-white/40">
-                    Access Portal
+                <a href="{{ url_for('login') }}" class="px-8 py-4 rounded-xl border border-white/10 text-white font-bold uppercase tracking-widest hover:bg-white/5 transition-all w-full sm:w-auto text-xs backdrop-blur-sm">
+                    Patient Login
                 </a>
             </div>
         </div>
