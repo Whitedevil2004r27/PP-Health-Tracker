@@ -3,7 +3,8 @@ import os
 import serverless_wsgi
 
 # Add the root directory to the python path so it can find app.py
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, root)
 
 from app import app
 
