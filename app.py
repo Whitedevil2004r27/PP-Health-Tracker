@@ -305,8 +305,6 @@ columns = numerical_cols + categorical_cols
 # -------------------------
 @app.route('/')
 def home():
-    if 'username' in session:
-        return redirect(url_for('predict'))
     return render_template('index.html')
 
 @app.route('/register', methods=['GET','POST'])

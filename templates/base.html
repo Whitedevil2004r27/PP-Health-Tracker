@@ -241,13 +241,14 @@
         <header class="h-20 border-b border-white/5 bg-dark/60 backdrop-blur-xl sticky top-0 z-[100] flex items-center justify-between px-10 transition-all duration-500 shadow-2xl">
             <div class="flex items-center space-x-12">
                 <!-- Global Brand Logo -->
-                <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('home') }}" class="flex items-center group outline-none">
+                <a href="{{ url_for('home') }}" class="flex items-center group outline-none">
                     <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="w-14 h-14 object-contain group-hover:scale-110 transition-transform duration-500 py-1">
                 </a>
                 
                 {% if session.get('user_id') %}
                 <!-- Unified Desktop Top Navigation Menu -->
                 <nav class="hidden md:flex items-center space-x-2">
+                    <a href="{{ url_for('home') }}" class="px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all {% if request.path == url_for('home') %}text-primary bg-primary/10 border border-primary/20{% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">Portal Home</a>
                     <a href="{{ url_for('dashboard') }}" class="px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all {% if request.path == url_for('dashboard') %}text-primary bg-primary/10 border border-primary/20{% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">Command Center</a>
                     <a href="{{ url_for('predict') }}" class="px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all {% if request.path == url_for('predict') %}text-primary bg-primary/10 border border-primary/20{% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">Neural Audit</a>
                     <a href="{{ url_for('history') }}" class="px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all {% if request.path == url_for('history') %}text-primary bg-primary/10 border border-primary/20{% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">Forensic History</a>
