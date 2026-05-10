@@ -210,7 +210,6 @@
         </div>
     </div>
 
-    <!-- PREDICTION RESULTS PANEL -->
     {% if prediction %}
     <div id="results" class="space-y-8 md:space-y-12 py-12 animate__animated animate__fadeInUp">
         <div class="saas-card p-6 md:p-12 text-center space-y-8 md:space-y-10 relative overflow-hidden">
@@ -244,6 +243,15 @@
                     Export Clinical PDF
                 </a>
             </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if error_msg %}
+    <div class="fixed top-24 left-1/2 -translate-x-1/2 z-[250] animate__animated animate__shakeX">
+        <div class="bg-red-500/10 border border-red-500/50 backdrop-blur-xl px-6 py-4 rounded-2xl flex items-center gap-4 text-red-500">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <span class="text-xs font-bold uppercase tracking-widest">System Error: {{ error_msg }}</span>
         </div>
     </div>
     {% endif %}

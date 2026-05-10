@@ -611,50 +611,47 @@ def dashboard():
         history_times = [p[0] for p in user_predictions]
         forecast_data = calculate_health_forecast(history_times, history_scores)
 
-    # -------------------------
-    # Prepare Chart Data
-    # -------------------------
-    chart_labels = []
-    for p in user_predictions:
-        # p[0] is a datetime object
-        dt_str = str(p[0])
-        label = dt_str.split('.')[0] if '.' in dt_str else dt_str
-        chart_labels.append(label)
-    
-    chart_data = [score_map.get(p[1], 50) for p in user_predictions] if total_predictions > 0 else []
-    
-    # Append forecast to labels and fill chart_data with nulls for the forecast part
-    # We will use two datasets in the frontend: actual and forecast
-    forecast_labels = [f[0] for f in forecast_data]
-    forecast_points = [f[1] for f in forecast_data]
+    try:
+        # Prepare Chart Data
+        chart_labels = []
+        for p in user_predictions:
+            dt_str = str(p[0])
+            label = dt_str.split('.')[0] if '.' in dt_str else dt_str
+            chart_labels.append(label)
+        
+        chart_data = [score_map.get(p[1], 50) for p in user_predictions] if total_predictions > 0 else []
+        forecast_labels = [str(f[0]) for f in forecast_data]
+        forecast_points = [float(f[1]) for f in forecast_data]
 
-    # Ensure consistent dataset lengths for Chart.js alignment
-    full_labels = chart_labels + forecast_labels
-    actual_padded = chart_data + [None] * len(forecast_labels)
-    forecast_padded = ([None] * (len(chart_data) - 1) + [chart_data[-1]] + forecast_points) if chart_data else []
+        full_labels = chart_labels + forecast_labels
+        actual_padded = [float(x) if x is not None else None for x in chart_data] + [None] * len(forecast_labels)
+        forecast_padded = ([None] * (len(chart_data) - 1) + [float(chart_data[-1])] + forecast_points) if chart_data else []
 
-    wellness_score = max(0, min(100, wellness_score))
-    
-    processed_data = {
-        'labels': full_labels,
-        'actual': actual_padded,
-        'forecast': forecast_padded
-    }
+        processed_data = {
+            'labels': full_labels,
+            'actual': actual_padded,
+            'forecast': forecast_padded
+        }
 
-    # Calculate latest trend variance for the UI
-    last_actual = chart_data[-1] if chart_data else None
-    last_forecast = forecast_points[-1] if forecast_points else None
-    trend_variance = (last_forecast - last_actual) if (last_actual is not None and last_forecast is not None) else 0
+        last_actual = float(chart_data[-1]) if chart_data else 0
+        last_forecast = float(forecast_points[-1]) if forecast_points else 0
+        trend_variance = int(last_forecast - last_actual)
+    except Exception as e:
+        print(f"DASHBOARD LOGIC ERROR: {e}")
+        processed_data = {'labels': [], 'actual': [], 'forecast': []}
+        last_actual = 0
+        last_forecast = 0
+        trend_variance = 0
 
     return render_template('dashboard.html', 
                            total=total_predictions,
                            counts=counts,
-                           wellness_score=int(wellness_score),
+                           wellness_score=int(max(0, min(100, wellness_score))),
                            chart_data_json=json.dumps(processed_data),
                            chart_data_dict=processed_data,
-                           last_actual=last_actual,
-                           last_forecast=last_forecast,
-                           trend_variance=int(trend_variance),
+                           last_actual=int(last_actual),
+                           last_forecast=int(last_forecast),
+                           trend_variance=trend_variance,
                            recent_predictions=user_predictions[::-1][:5])
 
 @app.route('/simulate', methods=['POST'])
