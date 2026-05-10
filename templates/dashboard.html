@@ -52,7 +52,7 @@
                     <div class="grid grid-cols-2 gap-4 md:gap-6 pt-2">
                         <div class="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5">
                             <p class="text-[8px] md:text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Status</p>
-                            <p class="text-sm md:text-lg font-bold truncate {% if 'Chronic' in recent_predictions[0][1] if recent_predictions else 'Normal' %}text-red-500{% else %}text-primary{% endif %}">
+                            <p class="text-sm md:text-lg font-bold truncate {% if recent_predictions and 'Chronic' in recent_predictions[0][1] %}text-red-500{% else %}text-primary{% endif %}">
                                 {{ recent_predictions[0][1] if recent_predictions else 'Awaiting Data' }}
                             </p>
                         </div>

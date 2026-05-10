@@ -119,6 +119,8 @@ if os.environ.get('VERCEL') or os.environ.get('PROXY_FIX'):
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_NAME'] = 'pp_health_session'
 csrf = CSRFProtect(app)
+if not CSRF_AVAILABLE:
+    app.jinja_env.globals['csrf_token'] = lambda: ""
 limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"], storage_uri="memory://") if LIMITER_AVAILABLE else Limiter()
 Talisman(app, content_security_policy=None, force_https=False)
 
