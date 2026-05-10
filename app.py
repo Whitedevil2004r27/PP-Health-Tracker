@@ -462,6 +462,10 @@ def predict():
                 cursor.execute("INSERT INTO predictions (user_id, timestamp, prediction, inputs_json) VALUES (%s, %s, %s, %s)", 
                                (session['user_id'], datetime.datetime.now(), prediction, inputs_json))
                 conn.commit()
+                
+                # Retrieve the newly created ID to confirm save
+                cursor.execute("SELECT id FROM predictions WHERE user_id=%s ORDER BY id DESC LIMIT 1", (session['user_id'],))
+                new_audit_id = cursor.fetchone()
                 conn.close()
 
                 # Store latest prediction data in session for PDF generation
@@ -473,6 +477,7 @@ def predict():
                     'inputs': {col: request.form.get(col) for col in columns},
                     'timestamp': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
+                flash("Neural Audit synchronized successfully.", "success")
 
         except Exception as e:
             error_msg = str(e)
@@ -609,7 +614,13 @@ def dashboard():
     # -------------------------
     # Prepare Chart Data
     # -------------------------
-    chart_labels = [p[0].split('.')[0] if '.' in str(p[0]) else str(p[0]) for p in user_predictions]
+    chart_labels = []
+    for p in user_predictions:
+        # p[0] is a datetime object
+        dt_str = str(p[0])
+        label = dt_str.split('.')[0] if '.' in dt_str else dt_str
+        chart_labels.append(label)
+    
     chart_data = [score_map.get(p[1], 50) for p in user_predictions] if total_predictions > 0 else []
     
     # Append forecast to labels and fill chart_data with nulls for the forecast part
