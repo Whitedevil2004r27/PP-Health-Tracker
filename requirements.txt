@@ -9,5 +9,4 @@ joblib
 serverless-wsgi
 flask-wtf
 flask-limiter
-tensorflow-cpu
 flask-talisman

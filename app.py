@@ -423,15 +423,14 @@ def predict():
             # -------------------------
             for col in categorical_cols:
                 val = request.form.get(col)
-                if val is None or val.strip() == '':
-                    error_msg = f"Please select value for '{col}'"
-                    break
-                val = val.strip()
                 le = label_encoders[col]
-
+                # Safety net: use first class as default if field is missing or empty
+                if val is None or val.strip() == '':
+                    val = le.classes_[0]
+                val = val.strip()
+                # Safety net: if the value is not in known classes, use first class
                 if val not in le.classes_:
-                    error_msg = f"Invalid value '{val}' for '{col}'"
-                    break
+                    val = le.classes_[0]
                 input_vals.append(le.transform([val])[0])
 
             # -------------------------
