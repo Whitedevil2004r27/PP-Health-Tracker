@@ -91,7 +91,8 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_NAME'] = 'pp_health_session'
 csrf = CSRFProtect(app)
 limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"], storage_uri="memory://")
-Talisman(app, content_security_policy=None)
+# Talisman for security headers - disable force_https since Vercel handles SSL termination
+Talisman(app, content_security_policy=None, force_https=False)
 
 # OAuth Configuration
 oauth = OAuth(app)
