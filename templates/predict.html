@@ -8,8 +8,8 @@
         <div class="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest mb-2">
             Neural Diagnostic Interface v3.0
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight">Neural <span class="text-neon">Audit</span></h1>
-        <p class="text-gray-400 max-w-xl mx-auto font-medium text-sm">Synchronize your systemic markers with our LSTM neural engine for a forensic wellness projection.</p>
+        <h1 class="text-3xl md:text-6xl font-extrabold text-white tracking-tight">Neural <span class="text-neon">Audit</span></h1>
+        <p class="text-gray-400 max-w-xl mx-auto font-medium text-[11px] md:text-sm px-4">Synchronize your systemic markers with our LSTM neural engine for a forensic wellness projection.</p>
     </div>
 
     <!-- Multi-Step SaaS Form -->
@@ -17,18 +17,18 @@
         <div class="bg-[#080808]/80 backdrop-blur-3xl rounded-[22px] overflow-hidden">
             
             <!-- Dynamic Progress Tracker -->
-            <div class="px-6 md:px-10 pt-8 md:pt-10 pb-6 border-b border-white/5 bg-white/[0.02]">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-4">
-                    <div class="space-y-1">
-                        <span id="stepIndicator" class="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Sequence 01</span>
-                        <h3 id="stepTitle" class="text-lg md:text-xl font-bold text-white tracking-tight">Biometric Foundation</h3>
+            <div class="px-5 md:px-10 pt-6 md:pt-10 pb-5 border-b border-white/5 bg-white/[0.02]">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-4">
+                    <div class="space-y-0.5">
+                        <span id="stepIndicator" class="text-[8px] md:text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Sequence 01</span>
+                        <h3 id="stepTitle" class="text-base md:text-xl font-bold text-white tracking-tight">Biometric Foundation</h3>
                     </div>
                     <div class="text-left sm:text-right">
-                        <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Diagnostic Progress</span>
-                        <p class="text-base md:text-lg font-black text-white italic" id="progressPercentage">25%</p>
+                        <span class="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Diagnostic Progress</span>
+                        <p class="text-sm md:text-lg font-black text-white italic" id="progressPercentage">25%</p>
                     </div>
                 </div>
-                <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                     <div id="progressBar" class="h-full bg-primary transition-all duration-700 shadow-[0_0_15px_rgba(34,197,94,0.3)]" style="width: 25%"></div>
                 </div>
             </div>
@@ -55,12 +55,12 @@
                         <!-- Gender Select -->
                         <div class="space-y-4">
                             <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Biological Profile</label>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-3">
                                 {% for opt in label_encoders['gender'].classes_ %}
                                 <label class="cursor-pointer group">
                                     <input type="radio" name="gender" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
-                                    <div class="h-14 flex items-center justify-center rounded-2xl bg-white/5 border border-white/5 peer-checked:bg-primary/10 peer-checked:border-primary/50 peer-checked:text-primary transition-all hover:bg-white/10">
-                                        <span class="text-xs font-bold uppercase tracking-widest">{{ opt }}</span>
+                                    <div class="h-12 md:h-14 flex items-center justify-center rounded-xl md:rounded-2xl bg-white/5 border border-white/5 peer-checked:bg-primary/10 peer-checked:border-primary/50 peer-checked:text-primary transition-all hover:bg-white/10">
+                                        <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest">{{ opt }}</span>
                                     </div>
                                 </label>
                                 {% endfor %}
@@ -220,11 +220,11 @@
                     <!-- Mindfulness Practice -->
                     <div class="space-y-4">
                         <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Mindfulness Practice</label>
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-5 gap-3">
                             {% for opt in label_encoders['meditation_or_mindfulness'].classes_ %}
                             <label class="cursor-pointer">
                                 <input type="radio" name="meditation_or_mindfulness" value="{{ opt }}" class="hidden peer" required {% if loop.first %}checked{% endif %}>
-                                <div class="h-16 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all text-center px-2">
+                                <div class="h-14 md:h-16 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 peer-checked:border-primary/50 peer-checked:bg-primary/10 peer-checked:text-primary transition-all text-center px-2">
                                     <span class="text-[9px] font-bold uppercase tracking-widest">{{ opt }}</span>
                                 </div>
                             </label>
@@ -234,14 +234,14 @@
                 </div>
 
                 <!-- Control Bar -->
-                <div class="flex justify-between items-center pt-10 border-t border-white/5">
-                    <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="h-12 px-8 rounded-xl border border-white/10 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all opacity-0 pointer-events-none">Previous</button>
-                    <div class="flex gap-2">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-6 pt-10 border-t border-white/5">
+                    <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="h-12 w-full sm:w-auto px-8 rounded-xl border border-white/10 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all opacity-0 pointer-events-none">Previous</button>
+                    <div class="flex gap-2 order-first sm:order-none">
                         {% for i in range(4) %}
-                        <div class="step-dot h-1 w-8 rounded-full bg-white/5 transition-all duration-500"></div>
+                        <div class="step-dot h-1 w-6 md:w-8 rounded-full bg-white/5 transition-all duration-500"></div>
                         {% endfor %}
                     </div>
-                    <button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn-primary h-12 px-10 rounded-xl text-xs uppercase tracking-widest">Continue</button>
+                    <button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn-primary h-12 w-full sm:w-auto px-10 rounded-xl text-xs uppercase tracking-widest">Continue</button>
                 </div>
             </form>
         </div>

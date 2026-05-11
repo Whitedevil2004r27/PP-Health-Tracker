@@ -10,10 +10,10 @@
                 <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse mr-2"></span>
                 System Operational
             </div>
-            <h1 class="text-3xl md:text-6xl font-extrabold text-white tracking-tight">
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight">
                 <span id="greetingText">Good Day,</span> <span class="text-neon">{{ (session.username or 'Patient') }}</span>
             </h1>
-            <p class="text-gray-500 font-medium text-xs md:text-sm max-w-md">Your clinical neural profile is currently being monitored for systemic anomalies.</p>
+            <p class="text-gray-500 font-medium text-[11px] md:text-sm max-w-md">Your clinical neural profile is currently being monitored for systemic anomalies.</p>
         </div>
         <div class="flex items-center w-full md:w-auto gap-4">
             <a href="{{ url_for('predict') }}" class="btn-primary w-full md:w-auto px-8 py-3.5 rounded-2xl flex items-center justify-center gap-2 text-[10px] uppercase tracking-wider">
@@ -26,19 +26,19 @@
     <!-- Hero Analytics Section -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Main Wellness Hero -->
-        <div class="lg:col-span-8 saas-card p-6 md:p-12 relative overflow-hidden group">
+        <div class="lg:col-span-8 saas-card p-6 md:p-10 lg:p-12 relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-8 hidden md:block">
                 <i data-lucide="activity" class="w-24 h-24 text-primary opacity-5"></i>
             </div>
             
             <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 relative z-10">
-                <div class="relative w-40 h-40 md:w-48 md:h-48 flex items-center justify-center">
+                <div class="relative w-36 h-36 md:w-48 md:h-48 flex items-center justify-center shrink-0">
                     <svg class="w-full h-full transform -rotate-90">
                         <circle cx="50%" cy="50%" r="42%" stroke="currentColor" stroke-width="6" fill="transparent" class="text-white/5" />
                         <circle id="wellnessCircle" cx="50%" cy="50%" r="42%" stroke="currentColor" stroke-width="10" fill="transparent" stroke-dasharray="528" stroke-dashoffset="528" class="text-primary transition-all duration-1000 ease-out" style="filter: drop-shadow(0 0 12px rgba(34, 197, 94, 0.4));" />
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span id="scoreValue" class="text-4xl md:text-6xl font-black text-white tracking-tighter">0</span>
+                        <span id="scoreValue" class="text-3xl md:text-6xl font-black text-white tracking-tighter">0</span>
                         <span class="text-[8px] md:text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Wellness Index</span>
                     </div>
                 </div>
@@ -49,16 +49,16 @@
                         <p class="text-gray-400 text-xs md:text-sm">Multi-stage neural analysis across 24 systemic biomarkers.</p>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4 md:gap-6 pt-2">
+                    <div class="grid grid-cols-2 gap-3 md:gap-6 pt-2">
                         <div class="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5">
                             <p class="text-[8px] md:text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Status</p>
-                            <p class="text-sm md:text-lg font-bold truncate {% if recent_predictions and 'Chronic' in recent_predictions[0][1] %}text-red-500{% else %}text-primary{% endif %}">
+                            <p class="text-xs md:text-lg font-bold truncate {% if recent_predictions and 'Chronic' in recent_predictions[0][1] %}text-red-500{% else %}text-primary{% endif %}">
                                 {{ recent_predictions[0][1] if recent_predictions else 'Awaiting Data' }}
                             </p>
                         </div>
                         <div class="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5">
                             <p class="text-[8px] md:text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Last Audit</p>
-                            <p class="text-sm md:text-lg font-bold text-white">{{ recent_predictions[0][0] if recent_predictions else 'N/A' }}</p>
+                            <p class="text-xs md:text-lg font-bold text-white">{{ recent_predictions[0][0] if recent_predictions else 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -92,36 +92,36 @@
     <!-- Analytics Dashboard Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Chart -->
-        <div class="lg:col-span-2 saas-card p-10 space-y-8">
-            <div class="flex items-center justify-between">
+        <div class="lg:col-span-2 saas-card p-6 md:p-10 space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h3 class="text-xl font-bold text-white uppercase tracking-tight">Systemic Trend Analysis</h3>
-                    <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Historical Index vs Neural Forecast</p>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Historical Index vs Neural Forecast</p>
                 </div>
                 <div class="flex gap-4">
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full bg-primary"></span>
-                        <span class="text-[10px] font-bold text-gray-500 uppercase">Actual</span>
+                        <span class="text-[9px] font-bold text-gray-500 uppercase">Actual</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 border border-dashed border-primary rounded-full"></span>
-                        <span class="text-[10px] font-bold text-gray-500 uppercase">Forecast</span>
+                        <span class="text-[9px] font-bold text-gray-500 uppercase">Forecast</span>
                     </div>
                 </div>
             </div>
-            <div class="h-80 w-full">
+            <div class="h-64 md:h-80 w-full">
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
 
         <!-- Distribution Hub -->
-        <div class="saas-card p-10 flex flex-col justify-between">
+        <div class="saas-card p-6 md:p-10 flex flex-col justify-between">
             <div class="space-y-2">
                 <h3 class="text-xl font-bold text-white uppercase tracking-tight">Diagnosis Mix</h3>
-                <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Global Profile Distribution</p>
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Global Profile Distribution</p>
             </div>
             
-            <div class="h-56 relative flex items-center justify-center">
+            <div class="h-48 md:h-56 relative flex items-center justify-center my-6 md:my-0">
                 <canvas id="donutChart"></canvas>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <p class="text-3xl font-black text-white tracking-tighter">{{ total }}</p>
@@ -130,17 +130,17 @@
             </div>
 
             <div class="grid grid-cols-3 gap-2 pt-6">
-                <div class="text-center p-3 rounded-xl bg-white/5 border border-white/5">
-                    <p class="text-[8px] font-bold text-primary uppercase">Stable</p>
-                    <p class="text-lg font-bold text-white">{{ ((counts.get('Normal', 0) / total * 100) if total > 0 else 0)|round|int }}%</p>
+                <div class="text-center p-2 md:p-3 rounded-xl bg-white/5 border border-white/5">
+                    <p class="text-[7px] md:text-[8px] font-bold text-primary uppercase">Stable</p>
+                    <p class="text-base md:text-lg font-bold text-white">{{ ((counts.get('Normal', 0) / total * 100) if total > 0 else 0)|round|int }}%</p>
                 </div>
-                <div class="text-center p-3 rounded-xl bg-white/5 border border-white/5">
-                    <p class="text-[8px] font-bold text-amber-500 uppercase">Risk</p>
-                    <p class="text-lg font-bold text-white">{{ ((counts.get('Chances of CFD', 0) / total * 100) if total > 0 else 0)|round|int }}%</p>
+                <div class="text-center p-2 md:p-3 rounded-xl bg-white/5 border border-white/5">
+                    <p class="text-[7px] md:text-[8px] font-bold text-amber-500 uppercase">Risk</p>
+                    <p class="text-base md:text-lg font-bold text-white">{{ ((counts.get('Chances of CFD', 0) / total * 100) if total > 0 else 0)|round|int }}%</p>
                 </div>
-                <div class="text-center p-3 rounded-xl bg-white/5 border border-white/5">
-                    <p class="text-[8px] font-bold text-red-500 uppercase">Critical</p>
-                    <p class="text-lg font-bold text-white">{{ ((counts.get('Chronic Fatigue Syndrome', 0) / total * 100) if total > 0 else 0)|round|int }}%</p>
+                <div class="text-center p-2 md:p-3 rounded-xl bg-white/5 border border-white/5">
+                    <p class="text-[7px] md:text-[8px] font-bold text-red-500 uppercase">Critical</p>
+                    <p class="text-base md:text-lg font-bold text-white">{{ ((counts.get('Chronic Fatigue Syndrome', 0) / total * 100) if total > 0 else 0)|round|int }}%</p>
                 </div>
             </div>
         </div>
@@ -155,18 +155,18 @@
                 <a href="{{ url_for('history') }}" class="text-primary text-[10px] font-bold uppercase tracking-widest hover:underline">Full Audit History</a>
             </div>
             
-            <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+            <div class="space-y-4 max-h-[400px] overflow-y-auto pr-1 md:pr-2 custom-scrollbar">
                 {% if recent_predictions %}
                     {% for p in recent_predictions %}
-                    <div class="flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group border-l-4 
+                    <div class="flex items-center justify-between p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group border-l-4 
                          {% if 'Chronic' in p[1] %} border-red-500 {% elif 'Chances' in p[1] %} border-amber-500 {% else %} border-primary {% endif %}">
-                        <div class="flex-1">
-                            <h4 class="font-bold text-white text-sm group-hover:text-primary transition-colors">{{ p[1] }}</h4>
-                            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">{{ p[0] }}</p>
+                        <div class="flex-1 min-w-0 pr-4">
+                            <h4 class="font-bold text-white text-[11px] md:text-sm group-hover:text-primary transition-colors truncate">{{ p[1] }}</h4>
+                            <p class="text-[8px] md:text-[9px] font-bold text-gray-500 uppercase tracking-widest">{{ p[0] }}</p>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <span class="text-[8px] font-bold text-gray-600 uppercase tracking-widest">Neural Verified</span>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-700 group-hover:text-primary transition-all"></i>
+                        <div class="flex items-center gap-2 md:gap-4 shrink-0">
+                            <span class="text-[7px] md:text-[8px] font-bold text-gray-600 uppercase tracking-widest hidden sm:block">Neural Verified</span>
+                            <i data-lucide="chevron-right" class="w-3 h-3 md:w-4 md:h-4 text-gray-700 group-hover:text-primary transition-all"></i>
                         </div>
                     </div>
                     {% endfor %}
@@ -180,34 +180,34 @@
         </div>
 
         <!-- Interactive Hub -->
-        <div class="saas-card p-10 space-y-8">
+        <div class="saas-card p-6 md:p-10 space-y-8">
             <h3 class="text-xl font-bold text-white uppercase tracking-tight">Clinical Operations</h3>
-            <div class="grid grid-cols-2 gap-4 h-full">
-                <a href="{{ url_for('predict') }}" class="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/30 transition-all group flex flex-col items-center justify-center text-center gap-4">
-                    <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                        <i data-lucide="zap" class="w-7 h-7"></i>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
+                <a href="{{ url_for('predict') }}" class="p-6 md:p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/30 transition-all group flex flex-row sm:flex-col items-center sm:justify-center gap-4">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shrink-0">
+                        <i data-lucide="zap" class="w-6 h-6 md:w-7 md:h-7"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-widest">Initialize Analysis</span>
+                    <span class="text-[10px] md:text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-widest text-left sm:text-center">Initialize Analysis</span>
                 </a>
-                <a href="{{ url_for('history') }}" class="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all group flex flex-col items-center justify-center text-center gap-4">
-                    <div class="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-                        <i data-lucide="history" class="w-7 h-7"></i>
+                <a href="{{ url_for('history') }}" class="p-6 md:p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all group flex flex-row sm:flex-col items-center sm:justify-center gap-4">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform shrink-0">
+                        <i data-lucide="history" class="w-6 h-6 md:w-7 md:h-7"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-widest">System History</span>
+                    <span class="text-[10px] md:text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-widest text-left sm:text-center">System History</span>
                 </a>
-                <a href="{{ url_for('export_data') }}" class="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-white/20 transition-all group flex flex-col items-center justify-center text-center gap-4">
-                    <div class="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center text-gray-500 group-hover:text-white transition-all">
-                        <i data-lucide="download" class="w-7 h-7"></i>
+                <a href="{{ url_for('export_data') }}" class="p-6 md:p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-white/20 transition-all group flex flex-row sm:flex-col items-center sm:justify-center gap-4">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/5 flex items-center justify-center text-gray-500 group-hover:text-white transition-all shrink-0">
+                        <i data-lucide="download" class="w-6 h-6 md:w-7 md:h-7"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-widest">GDPR CSV Export</span>
+                    <span class="text-[10px] md:text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-widest text-left sm:text-center">GDPR CSV Export</span>
                 </a>
-                <form action="{{ url_for('delete_account') }}" method="POST" onsubmit="return confirm('WARNING: This will permanently delete your account and all neural data. This action cannot be undone. Proceed?');" class="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-red-500/30 transition-all group flex flex-col items-center justify-center text-center gap-4">
+                <form action="{{ url_for('delete_account') }}" method="POST" onsubmit="return confirm('WARNING: This will permanently delete your account and all neural data. This action cannot be undone. Proceed?');" class="p-6 md:p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-red-500/30 transition-all group flex flex-row sm:flex-col items-center sm:justify-center gap-4">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="flex flex-col items-center justify-center w-full h-full gap-4 bg-transparent border-0 cursor-pointer">
-                        <div class="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
-                            <i data-lucide="trash-2" class="w-7 h-7"></i>
+                    <button type="submit" class="flex flex-row sm:flex-col items-center sm:justify-center w-full h-full gap-4 bg-transparent border-0 cursor-pointer">
+                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform shrink-0">
+                            <i data-lucide="trash-2" class="w-6 h-6 md:w-7 md:h-7"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-widest">Purge Account</span>
+                        <span class="text-[10px] md:text-xs font-bold text-gray-400 group-hover:text-white uppercase tracking-widest text-left sm:text-center">Purge Account</span>
                     </button>
                 </form>
             </div>
